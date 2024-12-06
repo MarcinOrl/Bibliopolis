@@ -1,0 +1,17 @@
+# .gitignore
+
+# Python
+*.pyc
+__pycache__/
+env/
+venv/
+
+# Django
+*.log
+*.sqlite3
+/media
+/static
+
+# Node
+node_modules/
+dist/
