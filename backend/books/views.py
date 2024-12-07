@@ -3,6 +3,8 @@ from django.shortcuts import render
 # Create your views here.
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework import serializers, views, status
+from django.contrib.auth.models import User
 
 
 @api_view(["GET"])
@@ -20,3 +22,37 @@ def book_list(request):
         {"id": 10, "title": "To Kill a Mockingbird"},
     ]
     return Response(books)
+
+
+class RegisterSerializer(serializers.ModelSerializer):
+    password2 = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = User
+        fields = ["username", "password", "password2", "email"]
+        extra_kwargs = {"password": {"write_only": True}}
+
+    def validate(self, attrs):
+        if attrs["password"] != attrs["password2"]:
+            raise serializers.ValidationError({"password": "Passwords must match."})
+        return attrs
+
+    def create(self, validated_data):
+        user = User.objects.create_user(
+            validated_data["username"],
+            validated_data["email"],
+            validated_data["password"],
+        )
+        return user
+
+
+class RegisterView(views.APIView):
+    def post(self, request, *args, **kwargs):
+        serializer = RegisterSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            return Response(
+                {"message": "User created successfully."},
+                status=status.HTTP_201_CREATED,
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
