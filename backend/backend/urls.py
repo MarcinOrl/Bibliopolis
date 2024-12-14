@@ -18,9 +18,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from books.views import (
-    RegisterView,
-)
+from books.views import RegisterView, ThemeView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -28,4 +26,5 @@ urlpatterns = [
     path("api/register/", RegisterView.as_view(), name="register"),
     path("api/login/", TokenObtainPairView.as_view(), name="login"),
     path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("api/theme/", ThemeView.as_view(), name="theme"),
 ]

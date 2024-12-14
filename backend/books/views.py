@@ -3,9 +3,10 @@ from django.shortcuts import render
 # Create your views here.
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework import serializers, views, status
 from django.contrib.auth.models import User
-from .models import Book
+from .models import Book, Theme
 from .serializers import BookSerializer
 
 
@@ -21,6 +22,18 @@ def book_list(request):
     serializer = BookSerializer(books, many=True)
 
     return Response(serializer.data)
+
+
+class ThemeView(APIView):
+    def get(self, request):
+        theme = Theme.objects.first()
+        return Response(
+            {
+                "primary_color": theme.primary_color,
+                "secondary_color": theme.secondary_color,
+                "accent_color": theme.accent_color,
+            }
+        )
 
 
 class RegisterSerializer(serializers.ModelSerializer):

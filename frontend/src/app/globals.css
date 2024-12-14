@@ -3,8 +3,15 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Kolory podstawowe */
+  --primary-color: #3498db;
+  --secondary-color: #2ecc71;
+  --accent-color: #e74c3c;
+
+  /* Wyliczone kolory */
+  --primary-light: #5dade2;
+  --secondary-dark: #27ae60;
+  --accent-light: #ec7063;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -15,7 +22,20 @@
 }
 
 body {
+  background-color: var(--primary-light);
   color: var(--foreground);
-  background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+button {
+  background-color: var(--secondary-color);
+  color: white;
+}
+
+button:hover {
+  background-color: var(--secondary-dark);
+}
+
+.accent-text {
+  color: var(--accent-color);
 }

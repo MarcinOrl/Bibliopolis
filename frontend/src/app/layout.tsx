@@ -5,6 +5,7 @@ import "./globals.css";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
+import ThemeManager from "./ThemeManager";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -57,6 +58,7 @@ export default function RootLayout({
   return (
     <html lang="pl">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <ThemeManager />
         {/* Nagłówek */}
         <div className="w-full bg-gray-800">
           <header className="text-white p-4 flex justify-between items-center w-full max-w-screen-xl mx-auto">
@@ -85,17 +87,13 @@ export default function RootLayout({
             {/* Przyciski */}
             <div className="flex items-center gap-4">
               {!isLoggedIn ? (
-                <Link href="/login">
-                  <button className="bg-blue-500 px-4 py-2 rounded">
-                    Zaloguj się
-                  </button>
+                <Link href="/login" className="bg-blue-500 px-4 py-2 rounded text-white">
+                  Zaloguj się
                 </Link>
               ) : (
                 <>
-                  <Link href="/profile">
-                    <button className="bg-green-500 px-4 py-2 rounded">
-                      Twoje konto
-                    </button>
+                  <Link href="/profile" className="bg-green-500 px-4 py-2 rounded text-white">
+                    Twoje konto
                   </Link>
                   <button
                     onClick={handleLogout}

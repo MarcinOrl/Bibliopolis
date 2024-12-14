@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import apiClient from "../../utils/api";
-import { useSearchParams } from "next/navigation";  // Importujemy useSearchParams
+import { useSearchParams } from "next/navigation";
 
 interface Book {
   id: number;
@@ -11,20 +11,20 @@ interface Book {
 
 const SearchPage: React.FC = () => {
   const [books, setBooks] = useState<Book[]>([]);
-  const searchParams = useSearchParams();  // Pobieramy search params
-  const searchQuery = searchParams.get('q');  // Pobieramy parametr q z URL
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams.get('q');
 
   useEffect(() => {
     if (searchQuery) {
       apiClient.get(`/books/?query=${searchQuery}`)
         .then(response => {
-          setBooks(response.data);  // Ustawienie wyników wyszukiwania
+          setBooks(response.data);
         })
         .catch(error => {
           console.error('Błąd podczas wyszukiwania książek:', error);
         });
     }
-  }, [searchQuery]);  // Wykonujemy efekt przy zmianie searchQuery
+  }, [searchQuery]);
 
   return (
     <div className="container mx-auto p-4">

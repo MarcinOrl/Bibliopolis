@@ -16,3 +16,12 @@ class Book(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Theme(models.Model):
+    primary_color = models.CharField(max_length=7, default="#3498db")  # niebieski
+    secondary_color = models.CharField(max_length=7, default="#2ecc71")  # zielony
+    accent_color = models.CharField(max_length=7, default="#e74c3c")  # czerwony
+
+    def __str__(self):
+        return f"Theme {self.id}"
