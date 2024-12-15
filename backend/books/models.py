@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 # Create your models here.
@@ -19,9 +20,20 @@ class Book(models.Model):
 
 
 class Theme(models.Model):
+    name = models.CharField(max_length=100)
     primary_color = models.CharField(max_length=7, default="#3498db")  # niebieski
     secondary_color = models.CharField(max_length=7, default="#2ecc71")  # zielony
     accent_color = models.CharField(max_length=7, default="#e74c3c")  # czerwony
 
     def __str__(self):
-        return f"Theme {self.id}"
+        return self.name
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    selected_theme = models.ForeignKey(
+        Theme, on_delete=models.SET_NULL, null=True, blank=True
+    )
+
+    def __str__(self):
+        return self.user.username

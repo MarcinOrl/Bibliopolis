@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import chroma from "chroma-js";
-import apiClient from "../utils/api";
+import apiClient from "./api";
 
-const applyColors = (primary: string, secondary: string, accent: string) => {
+export const applyColors = (primary: string, secondary: string, accent: string) => {
   const root = document.documentElement;
 
   // Wyliczanie jaśniejszych i ciemniejszych wersji kolorów
@@ -22,12 +22,19 @@ const applyColors = (primary: string, secondary: string, accent: string) => {
 
 const ThemeManager = () => {
   useEffect(() => {
-    apiClient.get("/theme/")
+    apiClient.get("/themes/select/")
       .then(response => {
         const { primary_color, secondary_color, accent_color } = response.data;
         applyColors(primary_color, secondary_color, accent_color);
       })
-      .catch(error => console.error("Błąd ładowania kolorów:", error));
+      .catch(() => {
+          apiClient.get("/theme/default/")
+            .then(response => {
+              const { primary_color, secondary_color, accent_color } = response.data;
+              applyColors(primary_color, secondary_color, accent_color);
+            })
+            .catch(error => console.error("Błąd ładowania domyślnego motywu:", error));
+        });
   }, []);
 
   return null;

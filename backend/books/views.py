@@ -1,13 +1,12 @@
 from django.shortcuts import render
-
-# Create your views here.
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import serializers, views, status
 from django.contrib.auth.models import User
-from .models import Book, Theme
 from .serializers import BookSerializer
+from .models import Book, Theme, UserProfile
 
 
 @api_view(["GET"])
@@ -27,13 +26,72 @@ def book_list(request):
 class ThemeView(APIView):
     def get(self, request):
         theme = Theme.objects.first()
+        if theme:
+            return Response(
+                {
+                    "primary_color": theme.primary_color,
+                    "secondary_color": theme.secondary_color,
+                    "accent_color": theme.accent_color,
+                }
+            )
+        else:
+            return Response({"error": "No themes available."}, status=404)
+
+
+class ThemeListView(APIView):
+    def get(self, request):
+        themes = Theme.objects.all()
         return Response(
-            {
-                "primary_color": theme.primary_color,
-                "secondary_color": theme.secondary_color,
-                "accent_color": theme.accent_color,
-            }
+            [
+                {
+                    "id": theme.id,
+                    "name": theme.name,
+                    "primary_color": theme.primary_color,
+                    "secondary_color": theme.secondary_color,
+                    "accent_color": theme.accent_color,
+                }
+                for theme in themes
+            ]
         )
+
+
+class SelectedThemeView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        theme_id = request.data.get("theme_id")
+        try:
+            theme = Theme.objects.get(id=theme_id)
+            profile, _ = UserProfile.objects.get_or_create(user=request.user)
+            profile.selected_theme = theme
+            profile.save()
+
+            return Response(
+                {
+                    "primary_color": theme.primary_color,
+                    "secondary_color": theme.secondary_color,
+                    "accent_color": theme.accent_color,
+                }
+            )
+
+        except Theme.DoesNotExist:
+            return Response({"error": "Theme not found."}, status=404)
+
+    def get(self, request):
+        profile = UserProfile.objects.get(user=request.user)
+        selected_theme = profile.selected_theme
+        if selected_theme:
+            return Response(
+                {
+                    "id": selected_theme.id,
+                    "name": selected_theme.name,
+                    "primary_color": selected_theme.primary_color,
+                    "secondary_color": selected_theme.secondary_color,
+                    "accent_color": selected_theme.accent_color,
+                }
+            )
+        else:
+            return Response({"error": "No theme selected."}, status=404)
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -55,6 +113,9 @@ class RegisterSerializer(serializers.ModelSerializer):
             validated_data["email"],
             validated_data["password"],
         )
+
+        UserProfile.objects.create(user=user)
+
         return user
 
 
