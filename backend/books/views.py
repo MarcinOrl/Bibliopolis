@@ -25,15 +25,45 @@ def book_list(request):
     return Response(serializer.data)
 
 
+# @login_required
+# def user_info(request):
+#     return JsonResponse(
+#         {
+#             "isAdmin": request.user.is_staff,
+#             "username": request.user.username,
+#             "email": request.user.email,
+#         }
+#     )
+
+
+@api_view(["GET"])
 @login_required
-def user_info(request):
-    return JsonResponse(
+def user_status(request):
+    user = request.user
+    if not user.is_authenticated:
+        return Response({"is_admin": False, "is_moderator": False})
+
+    profile = user.userprofile
+    return Response(
         {
-            "isAdmin": request.user.is_staff,
-            "username": request.user.username,
-            "email": request.user.email,
+            "is_admin": profile.is_admin,
+            "is_moderator": profile.is_moderator,
         }
     )
+
+
+class UserProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        return Response(
+            {
+                "username": user.username,
+                "is_admin": user.userprofile.is_admin,
+                "is_moderator": user.userprofile.is_moderator,
+            }
+        )
 
 
 class ThemeView(APIView):

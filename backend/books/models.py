@@ -33,6 +33,8 @@ class UserProfile(models.Model):
     selected_theme = models.ForeignKey(
         Theme, on_delete=models.SET_NULL, null=True, blank=True
     )
+    is_admin = models.BooleanField(default=False)
+    is_moderator = models.BooleanField(default=False)
 
     def __str__(self):
         return self.user.username

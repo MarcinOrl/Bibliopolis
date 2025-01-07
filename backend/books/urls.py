@@ -9,10 +9,14 @@ from .views import (
     SliderListView,
     SliderDetailView,
     ImageListView,
+    UserProfileView,
     add_image_to_slider,
+    user_status,
 )
 
 urlpatterns = [
+    path("user_status/", user_status, name="user_status"),
+    path("api/profile/", UserProfileView.as_view(), name="user_profile"),
     path("books/", book_list, name="book-list"),
     path("theme/default/", ThemeView.as_view(), name="theme"),
     path("themes/", ThemeListView.as_view(), name="theme-list"),
