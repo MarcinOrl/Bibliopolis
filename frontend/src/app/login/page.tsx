@@ -21,7 +21,6 @@ const Login = () => {
       const { access, refresh } = response.data;
       localStorage.setItem('access_token', access);
       localStorage.setItem('refresh_token', refresh);
-      alert('Zalogowano pomyślnie!');
       window.location.href = '/';
     } catch (err) {
       setError('Błąd logowania. Sprawdź dane.');

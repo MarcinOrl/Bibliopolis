@@ -7,8 +7,13 @@ from django.contrib.auth.decorators import login_required
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import serializers, views, status
 from django.contrib.auth.models import User
-from .serializers import BookSerializer, GalleryImageSerializer, SliderSerializer
-from .models import Book, Theme, UserProfile, GalleryImage, Slider
+from .serializers import (
+    BookSerializer,
+    GalleryImageSerializer,
+    SliderSerializer,
+    CategorySerializer,
+)
+from .models import Book, Theme, UserProfile, GalleryImage, Slider, Category
 
 
 @api_view(["GET"])
@@ -25,15 +30,22 @@ def book_list(request):
     return Response(serializer.data)
 
 
-# @login_required
-# def user_info(request):
-#     return JsonResponse(
-#         {
-#             "isAdmin": request.user.is_staff,
-#             "username": request.user.username,
-#             "email": request.user.email,
-#         }
-#     )
+class BookListAPIView(APIView):
+    def get(self, request):
+        category_id = request.query_params.get("category")
+        if category_id:
+            books = Book.objects.filter(category_id=category_id)
+        else:
+            books = Book.objects.all()
+        serializer = BookSerializer(books, many=True, context={"request": request})
+        return Response(serializer.data)
+
+
+class CategoryListAPIView(APIView):
+    def get(self, request):
+        categories = Category.objects.all()
+        serializer = CategorySerializer(categories, many=True)
+        return Response(serializer.data)
 
 
 @api_view(["GET"])

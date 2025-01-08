@@ -1,6 +1,8 @@
 from django.urls import path
 from .views import (
     book_list,
+    BookListAPIView,
+    CategoryListAPIView,
     ThemeView,
     ThemeListView,
     SelectedThemeView,
@@ -17,7 +19,8 @@ from .views import (
 urlpatterns = [
     path("user_status/", user_status, name="user_status"),
     path("api/profile/", UserProfileView.as_view(), name="user_profile"),
-    path("books/", book_list, name="book-list"),
+    path("books/", BookListAPIView.as_view(), name="book-list"),
+    path("categories/", CategoryListAPIView.as_view(), name="category-list"),
     path("theme/default/", ThemeView.as_view(), name="theme"),
     path("themes/", ThemeListView.as_view(), name="theme-list"),
     path("themes/select/", SelectedThemeView.as_view(), name="select-theme"),

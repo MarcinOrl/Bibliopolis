@@ -27,7 +27,6 @@ const Register = () => {
         password,
         password2,
       });
-      alert('Rejestracja zakończona sukcesem!');
       router.push('/login');
     } catch (err) {
       setError('Błąd rejestracji. Spróbuj ponownie.');
@@ -37,9 +36,9 @@ const Register = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Rejestracja</h1>
-      {error && <p className="text-red-500">{error}</p>}
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <h1 className="text-2xl font-bold mb-4 text-center">Rejestracja</h1>
+      {error && <p className="text-red-500 text-center">{error}</p>}
+      <form onSubmit={handleSubmit} className="max-w-lg mx-auto space-y-4">
         <input
           type="text"
           placeholder="Nazwa użytkownika"

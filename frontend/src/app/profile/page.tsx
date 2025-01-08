@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import apiClient from "../../utils/api";
 import { useRouter } from "next/navigation";
+import { useUser } from "../../utils/UserContext";
+import apiClient from "../../utils/api";
 import { applyColors } from "../../utils/ThemeManager";
 
 interface Theme {
@@ -14,73 +15,80 @@ interface Theme {
 }
 
 const Profile: React.FC = () => {
+    const { userData, isAuthenticated } = useUser();
     const [themes, setThemes] = useState<Theme[]>([]);
     const router = useRouter();
 
     useEffect(() => {
-        const token = localStorage.getItem("access_token");
-        if (!token) {
+        if (!isAuthenticated) {
             router.push("/login");
         }
-    }, [router]);
+    }, [isAuthenticated, router]);
 
     useEffect(() => {
-        apiClient.get("/themes/select/")
-          .then(response => {
-            const { primary_color, secondary_color, accent_color } = response.data;
-            applyColors(primary_color, secondary_color, accent_color);
-          })
-          .catch(error => {
-            console.error("Error loading selected theme:", error);
-            apiClient.get("/theme/default/")
-              .then(response => {
-                const { primary_color, secondary_color, accent_color } = response.data;
-                applyColors(primary_color, secondary_color, accent_color);
-              })
-              .catch(error => console.error("Error loading default theme:", error));
-          });
-    }, []);
+        if (isAuthenticated) {
+            apiClient.get("/themes/select/")
+                .then(response => {
+                    const { primary_color, secondary_color, accent_color } = response.data;
+                    applyColors(primary_color, secondary_color, accent_color);
+                })
+                .catch(error => {
+                    console.error("Error loading selected theme:", error);
+                    apiClient.get("/theme/default/")
+                        .then(response => {
+                            const { primary_color, secondary_color, accent_color } = response.data;
+                            applyColors(primary_color, secondary_color, accent_color);
+                        })
+                        .catch(error => console.error("Error loading default theme:", error));
+                });
+        }
+    }, [isAuthenticated]);
 
     useEffect(() => {
-        apiClient.get("/themes/")
-            .then(response => setThemes(response.data))
-            .catch(error => console.error("Error loading themes:", error));
-    }, []);
-   
+        if (isAuthenticated) {
+            apiClient.get("/themes/")
+                .then(response => setThemes(response.data))
+                .catch(error => console.error("Error loading themes:", error));
+        }
+    }, [isAuthenticated]);
+
     const handleSelectTheme = (themeId: number) => {
         apiClient.post("/themes/select/", { theme_id: themeId })
-          .then((response) => {
-            const { primary_color, secondary_color, accent_color } = response.data;
-            applyColors(primary_color, secondary_color, accent_color);
-            alert("Motyw został zmieniony.");
-          })
-          .catch(error => {
-            console.error("Error selecting theme.", error);
-            alert("Błąd przy zmianie motywu.");
-          });
-      };
-      
+            .then((response) => {
+                const { primary_color, secondary_color, accent_color } = response.data;
+                applyColors(primary_color, secondary_color, accent_color);
+                alert("Motyw został zmieniony.");
+            })
+            .catch(error => {
+                console.error("Error selecting theme.", error);
+                alert("Błąd przy zmianie motywu.");
+            });
+    };
 
+    if (!userData) return <div>Ładowanie...</div>;
+    
     return (
         <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-4 flex justify-center">Twoje konto</h1>
-            <h1 className="text-2xl font-bold mb-4">Wybierz motyw</h1>
-            <ul className="space-y-4">
-                {themes.map(theme => (
-                <li key={theme.id} className="p-4 border rounded">
-                    <h2 className="text-xl font-bold">{theme.name}</h2>
-                    <div className="flex gap-2 mt-2">
-                    <div style={{ backgroundColor: theme.primary_color }} className="w-8 h-8 rounded-full"></div>
-                    <div style={{ backgroundColor: theme.secondary_color }} className="w-8 h-8 rounded-full"></div>
-                    <div style={{ backgroundColor: theme.accent_color }} className="w-8 h-8 rounded-full"></div>
-                    </div>
-                    <button
-                    onClick={() => handleSelectTheme(theme.id)}
-                    className="mt-2 bg-blue-500 text-white px-4 py-2 rounded"
-                    >
-                    Wybierz
-                    </button>
-                </li>
+            <h1 className="text-xl py-4 font-semibold">Witaj, {userData.username}</h1>
+            <h1 className="text-xl py-4 font-semibold">Is admin: {userData.is_admin ? 'Tak' : 'Nie'}</h1>
+            <ul className="flex flex-wrap gap-4">
+                {themes.map((theme) => (
+                    <li key={theme.id} className="p-4 border rounded flex-shrink-0">
+                        <h3 className="text-xl font-bold">{theme.name}</h3>
+                        <div className="flex items-center gap-2 mt-2">
+                            <div className="flex gap-2">
+                                <div style={{ backgroundColor: theme.primary_color }} className="w-8 h-8 border rounded-full"></div>
+                                <div style={{ backgroundColor: theme.secondary_color }} className="w-8 h-8 border rounded-full"></div>
+                                <div style={{ backgroundColor: theme.accent_color }} className="w-8 h-8 border rounded-full"></div>
+                            </div>
+                            <button
+                                onClick={() => handleSelectTheme(theme.id)}
+                                className="ml-2 bg-blue-500 text-white px-4 py-2 rounded"
+                            >
+                                Wybierz
+                            </button>
+                        </div>
+                    </li>
                 ))}
             </ul>
         </div>
