@@ -1,7 +1,7 @@
-from django.shortcuts import render
 from django.http import JsonResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.exceptions import NotFound
 from rest_framework.decorators import api_view
 from django.contrib.auth.decorators import login_required
 from rest_framework.permissions import IsAuthenticated
@@ -16,18 +16,15 @@ from .serializers import (
 from .models import Book, Theme, UserProfile, GalleryImage, Slider, Category
 
 
-@api_view(["GET"])
-def book_list(request):
-    query = request.GET.get("query", "").lower()
+class BookDetailAPIView(APIView):
+    def get(self, request, pk):  # Użyj 'pk' zamiast 'id'
+        try:
+            book = Book.objects.get(pk=pk)
+        except Book.DoesNotExist:
+            raise NotFound("Book not found")
 
-    if query:
-        books = Book.objects.filter(title__icontains=query)
-    else:
-        books = Book.objects.all()
-
-    serializer = BookSerializer(books, many=True)
-
-    return Response(serializer.data)
+        serializer = BookSerializer(book, context={"request": request})
+        return Response(serializer.data)
 
 
 class BookListAPIView(APIView):
