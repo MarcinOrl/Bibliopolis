@@ -87,8 +87,8 @@ export default function RootLayout({
 
               {/* Przyciski */}
               <div className="flex items-center gap-4">
-                <Link href="/products" className="bg-blue-500 px-4 py-2 rounded text-white">
-                  Produkty
+                <Link href="/books" className="bg-blue-500 px-4 py-2 rounded text-white">
+                  Książki
                 </Link>
                 <Link href="/slider" className="bg-yellow-500 px-4 py-2 rounded text-white">
                   Slider

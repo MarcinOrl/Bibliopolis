@@ -17,7 +17,7 @@ from .models import Book, Theme, UserProfile, GalleryImage, Slider, Category
 
 
 class BookDetailAPIView(APIView):
-    def get(self, request, pk):  # Użyj 'pk' zamiast 'id'
+    def get(self, request, pk):
         try:
             book = Book.objects.get(pk=pk)
         except Book.DoesNotExist:

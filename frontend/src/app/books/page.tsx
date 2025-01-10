@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation'; // Import useRouter do nawigacji
 
 interface Book {
   id: number;
@@ -16,10 +17,11 @@ interface Category {
   name: string;
 }
 
-const ProductsPage = () => {
+const BooksPage = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [books, setBooks] = useState<Book[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     // Pobieranie kategorii
@@ -79,7 +81,8 @@ const ProductsPage = () => {
           {books.map((book) => (
             <div
               key={book.id}
-              className="border rounded-lg shadow hover:shadow-lg transition-all overflow-hidden"
+              className="border rounded-lg shadow hover:shadow-lg transition-all overflow-hidden cursor-pointer"
+              onClick={() => router.push(`/books/${book.id}`)}
             >
               <img
                 src={book.image}
@@ -88,7 +91,7 @@ const ProductsPage = () => {
               />
               <div className="p-4">
                 <h3 className="text-lg font-bold">{book.title}</h3>
-                <p className="text-sm ">Autor: {book.author}</p>
+                <p className="text-sm">Autor: {book.author}</p>
                 <p className="text-xl font-bold mt-4">{book.price} zł</p>
               </div>
             </div>
@@ -99,4 +102,4 @@ const ProductsPage = () => {
   );
 };
 
-export default ProductsPage;
+export default BooksPage;
