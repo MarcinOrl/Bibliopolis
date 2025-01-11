@@ -378,12 +378,17 @@ class CreateOrderView(APIView):
         return Response(OrderSerializer(order).data, status=status.HTTP_201_CREATED)
 
 
-class UserOrdersView(generics.ListAPIView):
+class OrderListView(APIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = OrderSerializer
 
-    def get_queryset(self):
-        return Order.objects.filter(user=self.request.user)
+    def get(self, request):
+        if request.user.userprofile.is_admin or request.user.userprofile.is_moderator:
+            orders = Order.objects.all()
+        else:
+            orders = Order.objects.filter(user=request.user)
+
+        serializer = OrderSerializer(orders, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class OrderDetailView(APIView):

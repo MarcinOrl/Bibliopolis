@@ -48,12 +48,13 @@ class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True)
     total_price = serializers.DecimalField(max_digits=10, decimal_places=2)
     shipping_address = serializers.CharField()
+    username = serializers.CharField(source="user.username", read_only=True)
 
     class Meta:
         model = Order
         fields = [
             "id",
-            "user",
+            "username",
             "shipping_address",
             "status",
             "created_at",

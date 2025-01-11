@@ -13,9 +13,9 @@ from .views import (
     ImageListView,
     UserProfileView,
     CreateOrderView,
-    UserOrdersView,
     OrderDetailView,
     UpdateOrderStatusView,
+    OrderListView,
     add_image_to_slider,
     user_status,
 )
@@ -39,8 +39,8 @@ urlpatterns = [
     path("sliders/", SliderListView.as_view(), name="slider-list"),
     path("sliders/<int:slider_id>/", SliderDetailView.as_view(), name="slider-detail"),
     path("sliders/<int:slider_id>/add_image/", add_image_to_slider),
-    path("orders/", CreateOrderView.as_view(), name="create_order"),
-    path("orders/user/", UserOrdersView.as_view(), name="user_orders"),
+    path("order/", CreateOrderView.as_view(), name="create_order"),
+    path("orders/", OrderListView.as_view(), name="order-list"),
     path("orders/<int:order_id>/", OrderDetailView.as_view(), name="order-detail"),
     path(
         "orders/<int:pk>/update-status/",
