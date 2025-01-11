@@ -1,5 +1,14 @@
 from django.contrib import admin
-from .models import Book, Category, Theme, GalleryImage, Slider, UserProfile
+from .models import (
+    Book,
+    Category,
+    Theme,
+    GalleryImage,
+    Slider,
+    UserProfile,
+    Order,
+    OrderItem,
+)
 
 
 @admin.register(UserProfile)
@@ -14,3 +23,5 @@ admin.site.register(Category)
 admin.site.register(Theme)
 admin.site.register(GalleryImage)
 admin.site.register(Slider)
+admin.site.register(Order)
+admin.site.register(OrderItem)

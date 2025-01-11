@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Book, GalleryImage, Slider, Category
+from .models import Book, GalleryImage, Slider, Category, Order, OrderItem
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -34,3 +34,30 @@ class SliderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Slider
         fields = ["id", "images"]
+
+
+class OrderItemSerializer(serializers.ModelSerializer):
+    book_title = serializers.CharField(source="book.title")
+
+    class Meta:
+        model = OrderItem
+        fields = ["book_title", "quantity", "total_price"]
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    items = OrderItemSerializer(many=True)
+    total_price = serializers.DecimalField(max_digits=10, decimal_places=2)
+    shipping_address = serializers.CharField()
+
+    class Meta:
+        model = Order
+        fields = [
+            "id",
+            "user",
+            "shipping_address",
+            "status",
+            "created_at",
+            "updated_at",
+            "total_price",
+            "items",
+        ]

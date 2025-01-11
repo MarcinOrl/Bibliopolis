@@ -12,13 +12,17 @@ from .views import (
     SliderDetailView,
     ImageListView,
     UserProfileView,
+    CreateOrderView,
+    UserOrdersView,
+    OrderDetailView,
+    UpdateOrderStatusView,
     add_image_to_slider,
     user_status,
 )
 
 urlpatterns = [
     path("user_status/", user_status, name="user_status"),
-    path("api/profile/", UserProfileView.as_view(), name="user_profile"),
+    path("profile/", UserProfileView.as_view(), name="user_profile"),
     path("books/", BookListAPIView.as_view(), name="book-list"),
     path("books/<int:pk>/", BookDetailAPIView.as_view(), name="book-detail"),
     path("categories/", CategoryListAPIView.as_view(), name="category-list"),
@@ -35,4 +39,12 @@ urlpatterns = [
     path("sliders/", SliderListView.as_view(), name="slider-list"),
     path("sliders/<int:slider_id>/", SliderDetailView.as_view(), name="slider-detail"),
     path("sliders/<int:slider_id>/add_image/", add_image_to_slider),
+    path("orders/", CreateOrderView.as_view(), name="create_order"),
+    path("orders/user/", UserOrdersView.as_view(), name="user_orders"),
+    path("orders/<int:order_id>/", OrderDetailView.as_view(), name="order-detail"),
+    path(
+        "orders/<int:pk>/update-status/",
+        UpdateOrderStatusView.as_view(),
+        name="update_order_status",
+    ),
 ]

@@ -1,19 +1,32 @@
 from django.http import JsonResponse
+from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
 from rest_framework.exceptions import NotFound
 from rest_framework.decorators import api_view
 from django.contrib.auth.decorators import login_required
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import serializers, views, status
+from decimal import Decimal
 from django.contrib.auth.models import User
 from .serializers import (
     BookSerializer,
     GalleryImageSerializer,
     SliderSerializer,
     CategorySerializer,
+    OrderSerializer,
 )
-from .models import Book, Theme, UserProfile, GalleryImage, Slider, Category
+from .models import (
+    Book,
+    Theme,
+    UserProfile,
+    GalleryImage,
+    Slider,
+    Category,
+    Order,
+    OrderItem,
+)
 
 
 class BookDetailAPIView(APIView):
@@ -71,6 +84,13 @@ class UserProfileView(APIView):
                 "username": user.username,
                 "is_admin": user.userprofile.is_admin,
                 "is_moderator": user.userprofile.is_moderator,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "email": user.email,
+                "address": user.userprofile.address,
+                "city": user.userprofile.city,
+                "postal_code": user.userprofile.postal_code,
+                "phone_number": user.userprofile.phone_number,
             }
         )
 
@@ -317,3 +337,82 @@ def add_image_to_slider(request, slider_id):
     # Dodajemy zdjęcie do slajdera
     slider.images.add(image)
     return Response({"message": "Image added to slider"}, status=status.HTTP_200_OK)
+
+
+class CreateOrderView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        shipping_address = request.data.get("shipping_address")
+        items_data = request.data.get("items", [])
+
+        if not shipping_address or not items_data:
+            return Response(
+                {"detail": "Adres wysyłki i produkty są wymagane."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Tworzymy zamówienie
+        order = Order.objects.create(user=user, shipping_address=shipping_address)
+
+        total_price = Decimal("0.00")  # Zmieniamy na Decimal
+
+        for item_data in items_data:
+            book_id = item_data.get("book")
+            quantity = item_data.get("quantity", 1)
+            book = Book.objects.get(id=book_id)
+            item_total_price = (
+                book.price * quantity
+            )  # Obliczanie wartości dla pojedynczego produktu
+            total_price += item_total_price  # Dodaj do całkowitej wartości zamówienia
+
+            OrderItem.objects.create(
+                order=order, book=book, quantity=quantity, total_price=item_total_price
+            )
+
+        # Ustawiamy całkowitą wartość zamówienia
+        order.total_price = total_price
+        order.save()
+
+        return Response(OrderSerializer(order).data, status=status.HTTP_201_CREATED)
+
+
+class UserOrdersView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = OrderSerializer
+
+    def get_queryset(self):
+        return Order.objects.filter(user=self.request.user)
+
+
+class OrderDetailView(APIView):
+    def get(self, request, order_id):
+        try:
+            order = Order.objects.get(id=order_id)
+            serializer = OrderSerializer(order)
+            return Response(serializer.data)
+        except Order.DoesNotExist:
+            raise NotFound("Order not found")
+
+
+class UpdateOrderStatusView(APIView):
+    def post(self, request, pk):
+        try:
+            order = Order.objects.get(pk=pk)
+            new_status = request.data.get("status")
+            if new_status in dict(Order.STATUS_CHOICES).keys():
+                order.status = new_status
+                order.save()
+                return Response(
+                    {"status": "Zmieniono status zamówienia"}, status=status.HTTP_200_OK
+                )
+            else:
+                return Response(
+                    {"error": "Nieprawidłowy status"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        except Order.DoesNotExist:
+            return Response(
+                {"error": "Zamówienie nie istnieje"}, status=status.HTTP_404_NOT_FOUND
+            )

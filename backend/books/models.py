@@ -45,8 +45,12 @@ class Theme(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    address = models.CharField(max_length=255, null=True, blank=True)
+    city = models.CharField(max_length=100, null=True, blank=True)
+    postal_code = models.CharField(max_length=20, null=True, blank=True)
+    phone_number = models.CharField(max_length=20, null=True, blank=True)
     selected_theme = models.ForeignKey(
-        Theme, on_delete=models.SET_NULL, null=True, blank=True
+        "Theme", on_delete=models.SET_NULL, null=True, blank=True
     )
     is_admin = models.BooleanField(default=False)
     is_moderator = models.BooleanField(default=False)
@@ -69,3 +73,35 @@ class Slider(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Order(models.Model):
+    STATUS_CHOICES = [
+        ("pending", "Oczekujące"),
+        ("shipped", "Wysłane"),
+        ("delivered", "Dostarczone"),
+        ("cancelled", "Anulowane"),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    shipping_address = models.CharField(max_length=255, null=True, blank=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="pending")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    city = models.CharField(max_length=100, null=True, blank=True)
+    postal_code = models.CharField(max_length=20, null=True, blank=True)
+    phone_number = models.CharField(max_length=20, null=True, blank=True)
+
+    def __str__(self):
+        return f"Zamówienie {self.id} - {self.user.username}"
+
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, related_name="items", on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
+    def __str__(self):
+        return f"Produkt: {self.book.title}, Ilość: {self.quantity}"
