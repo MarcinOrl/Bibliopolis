@@ -23,9 +23,17 @@ class BookSerializer(serializers.ModelSerializer):
 
 
 class GalleryImageSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+
     class Meta:
         model = GalleryImage
         fields = ["id", "title", "description", "image"]
+
+    def get_image(self, obj):
+        request = self.context.get("request")
+        if not request:
+            return obj.image.url
+        return request.build_absolute_uri(obj.image.url)
 
 
 class SliderSerializer(serializers.ModelSerializer):

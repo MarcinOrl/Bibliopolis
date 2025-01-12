@@ -246,7 +246,7 @@ class UpdateSliderOrderView(APIView):
 class SliderListView(views.APIView):
     def get(self, request):
         sliders = Slider.objects.all()
-        serializer = SliderSerializer(sliders, many=True)
+        serializer = SliderSerializer(sliders, many=True, context={"request": request})
         return Response(serializer.data)
 
     def post(self, request):
@@ -263,7 +263,7 @@ class SliderDetailView(views.APIView):
     def get(self, request, slider_id):
         try:
             slider = Slider.objects.get(id=slider_id)
-            serializer = SliderSerializer(slider)
+            serializer = SliderSerializer(slider, context={"request": request})
             return Response(serializer.data)
         except Slider.DoesNotExist:
             return Response(
@@ -273,7 +273,9 @@ class SliderDetailView(views.APIView):
     def patch(self, request, slider_id):
         try:
             slider = Slider.objects.get(id=slider_id)
-            serializer = SliderSerializer(slider, data=request.data, partial=True)
+            serializer = SliderSerializer(
+                slider, data=request.data, partial=True, context={"request": request}
+            )
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
