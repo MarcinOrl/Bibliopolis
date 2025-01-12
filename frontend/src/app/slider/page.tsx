@@ -46,12 +46,9 @@ const SliderComponent: React.FC = () => {
     }
   }, [sliders, currentSlider]);
   
-
-  // Funkcja ustawiająca wysokość kart na równą
   useEffect(() => {
     const setEqualHeight = () => {
       let maxHeight = 0;
-      // Zbieramy wszystkie karty
       const cards = document.querySelectorAll('.card');
       cards.forEach((card) => {
         const cardHeight = card.clientHeight;
@@ -60,22 +57,19 @@ const SliderComponent: React.FC = () => {
         }
       });
 
-      // Ustawiamy maksymalną wysokość na wszystkie karty
       cards.forEach((card) => {
         (card as HTMLElement).style.height = `${maxHeight}px`;
       });
     };
 
-    // Uruchamiamy funkcję przy załadowaniu komponentu i przy zmianie slajdu
     setEqualHeight();
-    window.addEventListener('resize', setEqualHeight); // Po resize okna
+    window.addEventListener('resize', setEqualHeight);
     return () => window.removeEventListener('resize', setEqualHeight);
   }, [images, currentSlider]);
 
-  // Ustawienia dla slidera
   const settings = {
     infinite: true,
-    slidesToShow: 3,  // 3 obrazy na raz
+    slidesToShow: 3,
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 2000,
@@ -110,8 +104,8 @@ const SliderComponent: React.FC = () => {
               Dodaj zdjęcie
             </button>
           </Link>
-          <Link href="/slider_order">
-            <button className="bg-yellow-500 px-6 py-3 text-white rounded-lg shadow-md hover:bg-yellow-600 transition-all">
+          <Link href="/slider_edit">
+            <button className="bg-blue-500 px-6 py-3 text-white rounded-lg shadow-md hover:bg-blue-600 transition-all">
               Zarządzaj slajderami
             </button>
           </Link>
@@ -123,22 +117,21 @@ const SliderComponent: React.FC = () => {
           <button
             key={index}
             onClick={() => setCurrentSlider(index)}
-            className={`px-4 py-2 mx-2 rounded-lg bg-green-500 text-white`}
+            className={`border border-green-500  px-4 py-2 mx-2 rounded-lg accent-text primary-color`}
           >
             Zestaw {index + 1}
           </button>
         ))}
       </div>
-
       <div className="slider-wrapper">
         {images.length === 0 ? (
           <p className="text-center">Brak zdjęć w tym slajderze</p>
         ) : (
           <Slider {...settings}>
             {images.map((image: any) => (
-              <div key={image.id} className="card">
+              <div key={image.id} className="card shadow-lg">
                 <img
-                  src={`http://127.0.0.1:8000${image.image}`}
+                  src={image.image}
                   alt={image.title}
                   className="w-full h-48 object-cover rounded-lg"
                 />

@@ -61,7 +61,7 @@ button:hover {
 }
 
 .card {
-  border: 2px solid #ddd;
+  border: 1px solid #ddd;
   border-radius: 12px;
   padding: 16px;
   display: flex;
@@ -70,6 +70,7 @@ button:hover {
   align-items: stretch;
   transition: none;
   height: auto;
+  background-color: var(--primary-light)
 }
 
 .card img {

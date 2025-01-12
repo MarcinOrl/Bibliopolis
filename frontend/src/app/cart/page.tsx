@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import apiClient from "../../utils/api"; // Zakładając, że masz konfigurację apiClient
+import apiClient from "../../utils/api";
 
 interface Book {
   id: number;
@@ -70,6 +70,20 @@ const Cart = () => {
     setTotalPrice(parseFloat(price.toFixed(2)));
   };
 
+  const handleRemoveItem = (bookId: number) => {
+    const updatedCart = cart.filter((item) => item.book.id !== bookId);
+
+    setCart(updatedCart);
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
+
+    let price = 0;
+    updatedCart.forEach((item: any) => {
+      price += item.quantity * parseFloat(item.book.price);
+    });
+
+    setTotalPrice(parseFloat(price.toFixed(2)));
+  };
+
   const handleSubmitOrder = () => {
     router.push("/checkout");
   };
@@ -88,17 +102,18 @@ const Cart = () => {
             >
               <div className="flex-shrink-0 w-32 h-32">
                 <img
-                  src={item.book?.image || '/default-image.jpg'}
-                  alt={item.book?.title || 'Book'}
+                  src={item.book?.image || "/default-image.jpg"}
+                  alt={item.book?.title || "Book"}
                   className="w-full h-full object-cover rounded-lg shadow-md"
                 />
               </div>
               <div className="flex-grow">
-                <h3 className="text-xl font-semibold">{item.book?.title || 'Unknown Book'}</h3>
-                <p className="text-gray-600">{item.book?.author || 'Unknown Author'}</p>
+                <h3 className="text-xl font-semibold">{item.book?.title || "Unknown Book"}</h3>
+                <p className="text-gray-600">{item.book?.author || "Unknown Author"}</p>
               </div>
               <div className="text-lg font-medium">
-                <p>Ilość: 
+                <p>
+                  Ilość:
                   <input
                     type="number"
                     value={item.quantity}
@@ -109,8 +124,14 @@ const Cart = () => {
                     className="ml-2 secondary-color accent-text w-16 p-1 border rounded"
                   />
                 </p>
-                <p>Cena: {item.book?.price || 'N/A'} zł</p>
+                <p>Cena: {item.book?.price || "N/A"} zł</p>
               </div>
+              <button
+                onClick={() => handleRemoveItem(item.book.id)}
+                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all"
+              >
+                Usuń
+              </button>
             </div>
           ))}
         </div>

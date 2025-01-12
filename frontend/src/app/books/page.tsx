@@ -22,10 +22,11 @@ const BooksPage = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [books, setBooks] = useState<Book[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false); // Stan do kontrolowania modala
+  const [bookToAdd, setBookToAdd] = useState<Book | null>(null); // Książka dodana do koszyka
   const router = useRouter();
 
   useEffect(() => {
-    // Pobieranie kategorii
     const fetchCategories = async () => {
       try {
         const response = await apiClient.get('/categories/');
@@ -36,7 +37,7 @@ const BooksPage = () => {
     };
     fetchCategories();
   }, []);
-  
+
   useEffect(() => {
     const fetchBooks = async () => {
       try {
@@ -50,7 +51,33 @@ const BooksPage = () => {
       }
     };
     fetchBooks();
-  }, [selectedCategory]);  
+  }, [selectedCategory]);
+
+  const addToCart = (book: Book) => {
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    
+    const item = cart.find((item: { book: { id: number } }) => item.book.id === book.id);
+
+    if (item) {
+      item.quantity += 1;
+    } else {
+      cart.push({ book, quantity: 1 });
+    }
+
+    localStorage.setItem('cart', JSON.stringify(cart));
+
+    // Otwórz modal po dodaniu książki do koszyka
+    setBookToAdd(book);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const goToCart = () => {
+    router.push('/cart');
+  };
 
   return (
     <div className="flex">
@@ -61,7 +88,7 @@ const BooksPage = () => {
           <li
             onClick={() => setSelectedCategory(null)}
             className={`cursor-pointer px-3 py-2 rounded ${
-              selectedCategory === null ? 'bg-blue-500 text-white' : 'text-blue-500'
+              selectedCategory === null ? 'bg-blue-500 accent-text' : 'accent-text'
             }`}
           >
             Wszystkie
@@ -71,7 +98,7 @@ const BooksPage = () => {
               key={category.id}
               onClick={() => setSelectedCategory(category.id)}
               className={`cursor-pointer px-3 py-2 rounded ${
-                selectedCategory === category.id ? 'bg-blue-500 text-white' : 'text-blue-500'
+                selectedCategory === category.id ? 'bg-blue-500 accent-text' : 'accent-text'
               }`}
             >
               {category.name}
@@ -89,7 +116,7 @@ const BooksPage = () => {
           {books.map((book) => (
             <div
               key={book.id}
-              className="border rounded-lg shadow hover:shadow-lg transition-all overflow-hidden cursor-pointer"
+              className="primary-light rounded-lg shadow-lg hover:shadow-xl transition-all overflow-hidden cursor-pointer"
               onClick={() => router.push(`/books/${book.id}`)}
             >
               <img
@@ -101,11 +128,54 @@ const BooksPage = () => {
                 <h3 className="text-lg font-bold">{book.title}</h3>
                 <p className="text-sm">Autor: {book.author}</p>
                 <p className="text-xl font-bold mt-4">{book.price} zł</p>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    addToCart(book);
+                  }}
+                  className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 transition mt-4"
+                >
+                  Dodaj do koszyka
+                </button>
               </div>
             </div>
           ))}
         </div>
       </main>
+
+      {/* Modal */}
+      {isModalOpen && bookToAdd && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="secondary-color p-6 rounded-lg shadow-lg max-w-lg w-full">
+            <h2 className="text-xl font-bold mb-4">Książka została dodana do koszyka</h2>
+            <div className="flex gap-4 items-center">
+              <img
+                src={bookToAdd.image}
+                alt={bookToAdd.title}
+                className="w-20 h-32 object-contain"
+              />
+              <div>
+                <h3 className="text-lg font-semibold">{bookToAdd.title}</h3>
+                <p>{bookToAdd.price} zł</p>
+              </div>
+            </div>
+            <div className="mt-4 flex gap-4">
+              <button
+                onClick={goToCart}
+                className="bg-blue-500 accent-text px-6 py-2 rounded hover:bg-blue-600 transition"
+              >
+                Przejdź do koszyka
+              </button>
+              <button
+                onClick={closeModal}
+                className="bg-gray-500 accent-text px-6 py-2 rounded hover:bg-gray-400 transition"
+              >
+                Zamknij
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

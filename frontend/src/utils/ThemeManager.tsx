@@ -6,7 +6,7 @@ export const applyColors = (primary: string, secondary: string, accent: string) 
   const root = document.documentElement;
 
   // Wyliczanie jaśniejszych i ciemniejszych wersji kolorów
-  const primaryLight = chroma(primary).brighten(1.5).hex();
+  const primaryLight = chroma(primary).brighten(1).hex();
   const secondaryDark = chroma(secondary).darken(1).hex();
   const accentLight = chroma(accent).brighten(1).hex();
 

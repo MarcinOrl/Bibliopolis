@@ -58,7 +58,6 @@ const Profile: React.FC = () => {
             .then((response) => {
                 const { primary_color, secondary_color, accent_color } = response.data;
                 applyColors(primary_color, secondary_color, accent_color);
-                alert("Motyw został zmieniony.");
             })
             .catch(error => {
                 console.error("Error selecting theme.", error);
@@ -72,7 +71,6 @@ const Profile: React.FC = () => {
         <div>
             <div className="container mx-auto p-4">
                 <h1 className="text-xl py-4 font-semibold">Witaj, {userData.username}</h1>
-                <h1 className="text-xl py-4 font-semibold">Is admin: {userData.is_admin ? 'Tak' : 'Nie'}</h1>
                 <ul className="flex flex-wrap gap-4">
                     {themes.map((theme) => (
                         <li key={theme.id} className="p-4 border rounded flex-shrink-0">
@@ -93,11 +91,6 @@ const Profile: React.FC = () => {
                         </li>
                     ))}
                 </ul>
-            </div>
-            <div>
-                <Link href="/orders">
-                    <button className="bg-blue-500 text-white px-4 py-2 rounded mt-4">Zobacz moje zamówienia</button>
-                </Link>
             </div>
         </div>
     );

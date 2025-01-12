@@ -1,6 +1,7 @@
 'use client';
 
 import localFont from "next/font/local";
+import { FaShoppingCart } from 'react-icons/fa';
 import "./globals.css";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -48,49 +49,79 @@ export default function RootLayout({
         <UserProvider>
           <ThemeManager />
           {/* Nagłówek */}
-          <div className="w-full bg-gray-800">
-            <header className="p-4 flex justify-between items-center w-full mx-auto">
-              {/* Logotyp */}
+          <div className="w-full">
+            <header className="p-4 flex justify-between items-center w-full mx-auto secondary-color shadow-md">
+              {/* Logotyp po lewej */}
               <Link href="/">
-                <span className="text-3xl font-bold cursor-pointer">
-                  Sklep z książkami
+                <span className="text-3xl font-bold accent-text cursor-pointer hover:text-indigo-600 transition-colors">
+                  Bibliopolis
                 </span>
               </Link>
-              {/* Przyciski */}
-              <div className="flex items-center gap-4">
-                <Link href="/books" className="bg-blue-500 px-4 py-2 rounded text-white">
-                  Książki
+
+              {/* Linki w środku */}
+              <div className="flex items-center justify-center gap-6 w-full mx-auto flex-grow">
+                <Link
+                  href="/"
+                  className="accent-text hover:text-indigo-600 transition-colors"
+                >
+                  Home
                 </Link>
-                <Link href="/cart" className="bg-blue-500 px-4 py-2 rounded text-white">
-                  Koszyk
+                <Link
+                  href="/books"
+                  className="accent-text hover:text-indigo-600 transition-colors"
+                >
+                  Store
                 </Link>
-                <Link href="/slider" className="bg-yellow-500 px-4 py-2 rounded text-white">
+                {isLoggedIn && (
+                  <Link
+                    href="/orders"
+                    className="accent-text hover:text-indigo-600 transition-colors"
+                  >
+                    Orders
+                  </Link>
+                )}
+                <Link
+                  href="/slider"
+                  className="accent-text hover:text-indigo-600 transition-colors"
+                >
                   Slider
                 </Link>
+              </div>
+
+              {/* Ikona koszyka i opcje logowania/zalogowanego */}
+              <div className="flex items-center gap-4">
+                <Link
+                  href="/cart"
+                  className="accent-text hover:text-indigo-600 transition-colors"
+                >
+                  <FaShoppingCart size={24} />
+                </Link>
                 {!isLoggedIn ? (
-                  <Link href="/login" className="bg-blue-500 px-4 py-2 rounded text-white">
-                    Zaloguj się
+                  <Link
+                    href="/login"
+                    className="border border-blue-500 text-blue-500 px-5 py-2 rounded-lg hover:bg-blue-100 transition-all"
+                  >
+                    Login
                   </Link>
                 ) : (
                   <>
-                    <Link href="/orders" className="bg-blue-500 px-4 py-2 rounded text-white">
-                      Zamówienia
-                    </Link>
-                    <Link href="/profile" className="bg-green-500 px-4 py-2 rounded text-white">
-                      Twoje konto
+                    <Link
+                      href="/profile"
+                      className="bg-blue-500 text-white px-5 py-2 rounded-lg shadow-md hover:bg-blue-600 transition-all"
+                    >
+                      Account
                     </Link>
                     <button
                       onClick={handleLogout}
-                      className="bg-red-500 px-4 py-2 rounded"
+                      className="border border-red-500 text-red-500 px-5 py-2 rounded-lg hover:bg-red-100 transition-all"
                     >
-                      Wyloguj się
+                      Logout
                     </button>
                   </>
                 )}
               </div>
             </header>
           </div>
-
           {/* Główna część strony */}
           <main className="p-4">{children}</main>
         </UserProvider>
