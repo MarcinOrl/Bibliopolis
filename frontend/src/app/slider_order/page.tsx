@@ -2,17 +2,17 @@
 
 import { useState, useEffect } from 'react';
 import { useUser } from "../../utils/UserContext";
+import apiClient from "../../utils/api";
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
 
 const SliderOrderForm = () => {
   const { userData, isAuthenticated } = useUser();
-  const [images, setImages] = useState<any[]>([]); // Przechowujemy wszystkie zdjęcia
-  const [sliders, setSliders] = useState<any[]>([]); // Przechowujemy zestawy slajdów
-  const [currentSlider, setCurrentSlider] = useState<number | null>(null); // Indeks aktualnie wybranego slajdera
-  const [currentSliderImages, setCurrentSliderImages] = useState<any[]>([]); // Zdjęcia przypisane do slajdera
-  const [message, setMessage] = useState<string | null>(null); // Komunikat o sukcesie lub błędzie
-  const [messageType, setMessageType] = useState<'success' | 'error' | null>(null); // Typ komunikatu
+  const [images, setImages] = useState<any[]>([]);
+  const [sliders, setSliders] = useState<any[]>([]);
+  const [currentSlider, setCurrentSlider] = useState<number | null>(null);
+  const [currentSliderImages, setCurrentSliderImages] = useState<any[]>([]);
+  const [message, setMessage] = useState<string | null>(null);
+  const [messageType, setMessageType] = useState<'success' | 'error' | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -21,32 +21,34 @@ const SliderOrderForm = () => {
     }
   }, [isAuthenticated, userData, router]);
 
-  // Ładowanie zdjęć i zestawów slajdów
   useEffect(() => {
     const fetchData = async () => {
-      const imageResponse = await axios.get('http://127.0.0.1:8000/api/images/');
-      setImages(imageResponse.data);
-
-      const sliderResponse = await axios.get('http://127.0.0.1:8000/api/sliders/');
-      setSliders(sliderResponse.data);
-
-      if (currentSlider !== null) {
-        const sliderDetailResponse = await axios.get(`http://127.0.0.1:8000/api/sliders/${currentSlider}`);
-        setCurrentSliderImages(sliderDetailResponse.data.images);
+      try {
+        const imageResponse = await apiClient.get('/images/');
+        setImages(imageResponse.data);
+  
+        const sliderResponse = await apiClient.get('/sliders/');
+        setSliders(sliderResponse.data);
+  
+        if (currentSlider !== null) {
+          const sliderDetailResponse = await apiClient.get(`/sliders/${currentSlider}`);
+          setCurrentSliderImages(sliderDetailResponse.data.images);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
       }
     };
+  
     fetchData();
   }, [currentSlider]);
-
-  // Funkcja do ustawiania aktywnego slajdera
+  
   const handleSliderChange = (sliderId: number) => {
     setCurrentSlider(sliderId);
   };
 
-  // Funkcja do tworzenia nowego slajdera
   const handleCreateSlider = async () => {
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/sliders/', {});
+      const response = await apiClient.post('/sliders/', {});
       setSliders((prevSliders) => [...prevSliders, response.data]);
       setMessage('Slajder został utworzony.');
       setMessageType('success');
@@ -56,11 +58,10 @@ const SliderOrderForm = () => {
       setMessageType('error');
     }
   };
-
-  // Funkcja do usuwania slajdera
+  
   const handleDeleteSlider = async (sliderId: number) => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/sliders/${sliderId}`);
+      await apiClient.delete(`/sliders/${sliderId}`);
       setSliders((prevSliders) => prevSliders.filter((slider) => slider.id !== sliderId));
       setMessage('Slajder został usunięty.');
       setMessageType('success');
@@ -70,17 +71,16 @@ const SliderOrderForm = () => {
       setMessageType('error');
     }
   };
-
-  // Funkcja do dodania zdjęcia do slajdera (za pomocą POST)
+  
   const handleAddImageToSlider = async (imageId: number) => {
     if (currentSlider === null) return;
-
+  
     try {
-      await axios.post(`http://127.0.0.1:8000/api/sliders/${currentSlider}/add_image/`, { image_id: imageId });
+      await apiClient.post(`/sliders/${currentSlider}/add_image/`, { image_id: imageId });
       setMessage('Zdjęcie zostało dodane do slajdera.');
       setMessageType('success');
-      // Odświeżenie zdjęć przypisanych do slajdera
-      const sliderDetailResponse = await axios.get(`http://127.0.0.1:8000/api/sliders/${currentSlider}`);
+  
+      const sliderDetailResponse = await apiClient.get(`/sliders/${currentSlider}`);
       setCurrentSliderImages(sliderDetailResponse.data.images);
     } catch (error) {
       console.error('Błąd przy dodawaniu zdjęcia do slajdera:', error);
@@ -88,31 +88,29 @@ const SliderOrderForm = () => {
       setMessageType('error');
     }
   };
-
-  // Funkcja do usuwania zdjęcia ze slajdera
+  
   const handleRemoveImageFromSlider = async (imageId: number) => {
     if (currentSlider === null) return;
+  
     try {
-        await axios.post(`http://127.0.0.1:8000/api/sliders/${currentSlider}/`, { image_id: imageId });
-
-        setMessage('Zdjęcie zostało usunięte ze slajdera.');
-        setMessageType('success');
-
-        const sliderDetailResponse = await axios.get(`http://127.0.0.1:8000/api/sliders/${currentSlider}`);
-        setCurrentSliderImages(sliderDetailResponse.data.images);
+      await apiClient.post(`/sliders/${currentSlider}/`, { image_id: imageId });
+      setMessage('Zdjęcie zostało usunięte ze slajdera.');
+      setMessageType('success');
+  
+      const sliderDetailResponse = await apiClient.get(`/sliders/${currentSlider}`);
+      setCurrentSliderImages(sliderDetailResponse.data.images);
     } catch (error) {
-        console.error('Błąd przy usuwaniu zdjęcia ze slajdera:', error);
-        setMessage('Błąd przy usuwaniu zdjęcia ze slajdera.');
-        setMessageType('error');
+      console.error('Błąd przy usuwaniu zdjęcia ze slajdera:', error);
+      setMessage('Błąd przy usuwaniu zdjęcia ze slajdera.');
+      setMessageType('error');
     }
-};
-
-  // Funkcja do zmiany kolejności zdjęć
+  };
+  
   const handleOrderChange = async (imageId: number, newOrder: number) => {
     if (currentSlider === null) return;
-
+  
     try {
-      await axios.patch(`http://127.0.0.1:8000/api/sliders/${currentSlider}/update_order/`, { image_id: imageId, new_order: newOrder });
+      await apiClient.patch(`/sliders/${currentSlider}/update_order/`, { image_id: imageId, new_order: newOrder });
       setMessage('Kolejność zdjęć została zaktualizowana.');
       setMessageType('success');
     } catch (error) {
@@ -120,9 +118,8 @@ const SliderOrderForm = () => {
       setMessage('Błąd przy zmianie kolejności zdjęć.');
       setMessageType('error');
     }
-  };
+  };  
 
-  // Funkcja do sprawdzenia, czy zdjęcie jest już dodane do slajdera
   const isImageAddedToSlider = (imageId: number) => {
     return currentSliderImages.some((image: any) => image.id === imageId);
   };

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import apiClient from "../../utils/api";
 import Link from 'next/link';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
@@ -16,25 +16,36 @@ const SliderComponent: React.FC = () => {
 
   useEffect(() => {
     const fetchSliders = async () => {
-      const response = await axios.get('http://127.0.0.1:8000/api/sliders/');
-      setSliders(response.data);
-      if (response.data.length > 0) {
-        setCurrentSlider(0);
+      try {
+        const response = await apiClient.get('/sliders/');
+        setSliders(response.data);
+        if (response.data.length > 0) {
+          setCurrentSlider(0);
+        }
+      } catch (error) {
+        console.error('Error fetching sliders:', error);
       }
     };
+  
     fetchSliders();
   }, []);
+  
 
   useEffect(() => {
     if (sliders[currentSlider]) {
       const fetchSliderImages = async () => {
-        const sliderId = sliders[currentSlider].id;
-        const response = await axios.get(`http://127.0.0.1:8000/api/sliders/${sliderId}/`);
-        setImages(response.data.images || []);
+        try {
+          const sliderId = sliders[currentSlider].id;
+          const response = await apiClient.get(`/sliders/${sliderId}/`);
+          setImages(response.data.images || []);
+        } catch (error) {
+          console.error('Error fetching slider images:', error);
+        }
       };
       fetchSliderImages();
     }
   }, [sliders, currentSlider]);
+  
 
   // Funkcja ustawiająca wysokość kart na równą
   useEffect(() => {
@@ -112,7 +123,7 @@ const SliderComponent: React.FC = () => {
           <button
             key={index}
             onClick={() => setCurrentSlider(index)}
-            className={`px-4 py-2 mx-2 rounded-lg ${currentSlider === index ? 'bg-green-500' : 'bg-gray-500'} text-white`}
+            className={`px-4 py-2 mx-2 rounded-lg bg-green-500 text-white`}
           >
             Zestaw {index + 1}
           </button>

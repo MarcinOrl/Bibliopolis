@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import axios from 'axios';
+import apiClient from '../../utils/api';
 import { useRouter } from 'next/navigation';
 
 const Register = () => {
@@ -14,14 +14,14 @@ const Register = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     if (password !== password2) {
       setError('Hasła muszą być takie same.');
       return;
     }
-
+  
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/register/', {
+      await apiClient.post('/register/', {
         username,
         email,
         password,
@@ -30,9 +30,9 @@ const Register = () => {
       router.push('/login');
     } catch (err) {
       setError('Błąd rejestracji. Spróbuj ponownie.');
-      console.error(err);
+      console.error('Błąd rejestracji:', err);
     }
-  };
+  };  
 
   return (
     <div className="container mx-auto p-4">

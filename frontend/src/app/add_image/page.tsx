@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useUser } from "../../utils/UserContext";  // Przykładowy kontekst użytkownika
-import axios from 'axios';
+import { useUser } from "../../utils/UserContext";
+import apiClient from "../../utils/api";
 import Link from 'next/link';
 
 const AddImageForm = () => {
@@ -23,16 +23,16 @@ const AddImageForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     if (!image) return;
-
+  
     const formData = new FormData();
     formData.append('title', title);
     formData.append('description', description);
     formData.append('file', image);
-
+  
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/upload/', formData, {
+      await apiClient.post('/upload/', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       setMessage('Zdjęcie zostało pomyślnie dodane!');
@@ -40,20 +40,20 @@ const AddImageForm = () => {
       setTitle('');
       setDescription('');
       setImage(null);
-
+  
       setTimeout(() => {
         setMessage(null);
       }, 3000);
     } catch (error) {
-      console.error('There was an error adding the image:', error);
+      console.error('Błąd dodawania zdjęcia:', error);
       setMessage('Wystąpił błąd podczas dodawania zdjęcia. Spróbuj ponownie.');
       setMessageType('error');
-
+  
       setTimeout(() => {
         setMessage(null);
       }, 3000);
     }
-  };
+  };  
 
   return (
     <div className="container mx-auto p-6">

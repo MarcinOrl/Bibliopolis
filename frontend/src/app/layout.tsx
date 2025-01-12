@@ -26,7 +26,6 @@ export default function RootLayout({
 }>) {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
   const router = useRouter();
 
   useEffect(() => {
@@ -43,22 +42,10 @@ export default function RootLayout({
     router.push('/');
   };
 
-  const handleSearch = () => {
-    if (searchQuery) {
-      router.push(`/search?q=${searchQuery}`);
-    }
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      handleSearch();
-    }
-  };
-
   return (
     <html lang="pl">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <UserProvider> {/* Owijamy w UserProvider */}
+        <UserProvider>
           <ThemeManager />
           {/* Nagłówek */}
           <div className="w-full bg-gray-800">
@@ -69,26 +56,13 @@ export default function RootLayout({
                   Sklep z książkami
                 </span>
               </Link>
-
-              {/* Pasek wyszukiwania książek */}
-              <div className="flex items-center justify-center flex-grow mx-6">
-                <input
-                  type="text"
-                  placeholder="Szukaj..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  className="px-4 py-2 rounded-l-full border border-gray-300 w-full max-w-xs"
-                />
-                <button onClick={handleSearch} className="px-4 py-2 bg-blue-500 text-white rounded-r-full">
-                  Szukaj
-                </button>
-              </div>
-
               {/* Przyciski */}
               <div className="flex items-center gap-4">
                 <Link href="/books" className="bg-blue-500 px-4 py-2 rounded text-white">
                   Książki
+                </Link>
+                <Link href="/cart" className="bg-blue-500 px-4 py-2 rounded text-white">
+                  Koszyk
                 </Link>
                 <Link href="/slider" className="bg-yellow-500 px-4 py-2 rounded text-white">
                   Slider
@@ -99,6 +73,9 @@ export default function RootLayout({
                   </Link>
                 ) : (
                   <>
+                    <Link href="/orders" className="bg-blue-500 px-4 py-2 rounded text-white">
+                      Zamówienia
+                    </Link>
                     <Link href="/profile" className="bg-green-500 px-4 py-2 rounded text-white">
                       Twoje konto
                     </Link>
@@ -116,7 +93,7 @@ export default function RootLayout({
 
           {/* Główna część strony */}
           <main className="p-4">{children}</main>
-        </UserProvider> {/* Zamykanie UserProvider */}
+        </UserProvider>
       </body>
     </html>
   );

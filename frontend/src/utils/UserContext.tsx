@@ -24,12 +24,13 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const token = localStorage.getItem("access_token");
     if (token) {
       apiClient
-        .get("/api/profile/", {
+        .get("/profile/", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         })
         .then((response) => {
+          console.log("User data:", response.data);
           setUserData(response.data);
           setIsAuthenticated(true);
         })

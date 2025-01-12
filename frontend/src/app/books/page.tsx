@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation'; // Import useRouter do nawigacji
+import { useRouter } from 'next/navigation';
+import apiClient from '../../utils/api';
 
 interface Book {
   id: number;
@@ -25,24 +26,31 @@ const BooksPage = () => {
 
   useEffect(() => {
     // Pobieranie kategorii
-    fetch('http://localhost:8000/api/categories/')
-      .then((res) => res.json())
-      .then((data) => setCategories(data));
+    const fetchCategories = async () => {
+      try {
+        const response = await apiClient.get('/categories/');
+        setCategories(response.data);
+      } catch (error) {
+        console.error('Błąd pobierania kategorii:', error);
+      }
+    };
+    fetchCategories();
   }, []);
-
+  
   useEffect(() => {
-    if (selectedCategory === null) {
-      // Pobieranie wszystkich książek
-      fetch('http://localhost:8000/api/books/')
-        .then((res) => res.json())
-        .then((data) => setBooks(data));
-    } else {
-      // Pobieranie książek z wybranej kategorii
-      fetch(`http://localhost:8000/api/books/?category=${selectedCategory}`)
-        .then((res) => res.json())
-        .then((data) => setBooks(data));
-    }
-  }, [selectedCategory]);
+    const fetchBooks = async () => {
+      try {
+        const endpoint = selectedCategory === null 
+          ? '/books/' 
+          : `/books/?category=${selectedCategory}`;
+        const response = await apiClient.get(endpoint);
+        setBooks(response.data);
+      } catch (error) {
+        console.error('Błąd pobierania książek:', error);
+      }
+    };
+    fetchBooks();
+  }, [selectedCategory]);  
 
   return (
     <div className="flex">

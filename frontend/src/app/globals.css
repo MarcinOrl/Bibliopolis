@@ -88,12 +88,10 @@ button:hover {
   margin: 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #333;
 }
 
 .description p {
   margin: 4px 0 0;
-  color: #666;
   font-size: 0.9rem;
 }
 

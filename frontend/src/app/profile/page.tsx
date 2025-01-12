@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useUser } from "../../utils/UserContext";
 import apiClient from "../../utils/api";
 import { applyColors } from "../../utils/ThemeManager";
+import Link from 'next/link';
 
 interface Theme {
     id: number;
@@ -68,29 +69,36 @@ const Profile: React.FC = () => {
     if (!userData) return <div>Ładowanie...</div>;
     
     return (
-        <div className="container mx-auto p-4">
-            <h1 className="text-xl py-4 font-semibold">Witaj, {userData.username}</h1>
-            <h1 className="text-xl py-4 font-semibold">Is admin: {userData.is_admin ? 'Tak' : 'Nie'}</h1>
-            <ul className="flex flex-wrap gap-4">
-                {themes.map((theme) => (
-                    <li key={theme.id} className="p-4 border rounded flex-shrink-0">
-                        <h3 className="text-xl font-bold">{theme.name}</h3>
-                        <div className="flex items-center gap-2 mt-2">
-                            <div className="flex gap-2">
-                                <div style={{ backgroundColor: theme.primary_color }} className="w-8 h-8 border rounded-full"></div>
-                                <div style={{ backgroundColor: theme.secondary_color }} className="w-8 h-8 border rounded-full"></div>
-                                <div style={{ backgroundColor: theme.accent_color }} className="w-8 h-8 border rounded-full"></div>
+        <div>
+            <div className="container mx-auto p-4">
+                <h1 className="text-xl py-4 font-semibold">Witaj, {userData.username}</h1>
+                <h1 className="text-xl py-4 font-semibold">Is admin: {userData.is_admin ? 'Tak' : 'Nie'}</h1>
+                <ul className="flex flex-wrap gap-4">
+                    {themes.map((theme) => (
+                        <li key={theme.id} className="p-4 border rounded flex-shrink-0">
+                            <h3 className="text-xl font-bold">{theme.name}</h3>
+                            <div className="flex items-center gap-2 mt-2">
+                                <div className="flex gap-2">
+                                    <div style={{ backgroundColor: theme.primary_color }} className="w-8 h-8 border rounded-full"></div>
+                                    <div style={{ backgroundColor: theme.secondary_color }} className="w-8 h-8 border rounded-full"></div>
+                                    <div style={{ backgroundColor: theme.accent_color }} className="w-8 h-8 border rounded-full"></div>
+                                </div>
+                                <button
+                                    onClick={() => handleSelectTheme(theme.id)}
+                                    className="ml-2 bg-blue-500 text-white px-4 py-2 rounded"
+                                >
+                                    Wybierz
+                                </button>
                             </div>
-                            <button
-                                onClick={() => handleSelectTheme(theme.id)}
-                                className="ml-2 bg-blue-500 text-white px-4 py-2 rounded"
-                            >
-                                Wybierz
-                            </button>
-                        </div>
-                    </li>
-                ))}
-            </ul>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+            <div>
+                <Link href="/orders">
+                    <button className="bg-blue-500 text-white px-4 py-2 rounded mt-4">Zobacz moje zamówienia</button>
+                </Link>
+            </div>
         </div>
     );
 }
