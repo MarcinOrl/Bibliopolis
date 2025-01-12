@@ -50,11 +50,11 @@ const SliderOrderForm = () => {
     try {
       const response = await apiClient.post('/sliders/', {});
       setSliders((prevSliders) => [...prevSliders, response.data]);
-      setMessage('Slajder został utworzony.');
+      setMessage('The slider has been created.');
       setMessageType('success');
     } catch (error) {
-      console.error('Błąd przy tworzeniu slajdera:', error);
-      setMessage('Błąd przy tworzeniu slajdera.');
+      console.error('Error creating the slider.', error);
+      setMessage('Error creating the slider.');
       setMessageType('error');
     }
   };
@@ -63,11 +63,11 @@ const SliderOrderForm = () => {
     try {
       await apiClient.delete(`/sliders/${sliderId}`);
       setSliders((prevSliders) => prevSliders.filter((slider) => slider.id !== sliderId));
-      setMessage('Slajder został usunięty.');
+      setMessage('The slider has been deleted.');
       setMessageType('success');
     } catch (error) {
-      console.error('Błąd przy usuwaniu slajdera:', error);
-      setMessage('Błąd przy usuwaniu slajdera.');
+      console.error('Error deleting the slider.', error);
+      setMessage('Error deleting the slider.');
       setMessageType('error');
     }
   };
@@ -77,14 +77,14 @@ const SliderOrderForm = () => {
   
     try {
       await apiClient.post(`/sliders/${currentSlider}/add_image/`, { image_id: imageId });
-      setMessage('Zdjęcie zostało dodane do slajdera.');
+      setMessage('Image has been added to the slider.');
       setMessageType('success');
   
       const sliderDetailResponse = await apiClient.get(`/sliders/${currentSlider}`);
       setCurrentSliderImages(sliderDetailResponse.data.images);
     } catch (error) {
-      console.error('Błąd przy dodawaniu zdjęcia do slajdera:', error);
-      setMessage('Błąd przy dodawaniu zdjęcia do slajdera.');
+      console.error('Error adding image to the slider.', error);
+      setMessage('Error adding image to the slider.');
       setMessageType('error');
     }
   };
@@ -94,14 +94,14 @@ const SliderOrderForm = () => {
   
     try {
       await apiClient.post(`/sliders/${currentSlider}/`, { image_id: imageId });
-      setMessage('Zdjęcie zostało usunięte ze slajdera.');
+      setMessage('Image has been removed from the slider.');
       setMessageType('success');
   
       const sliderDetailResponse = await apiClient.get(`/sliders/${currentSlider}`);
       setCurrentSliderImages(sliderDetailResponse.data.images);
     } catch (error) {
-      console.error('Błąd przy usuwaniu zdjęcia ze slajdera:', error);
-      setMessage('Błąd przy usuwaniu zdjęcia ze slajdera.');
+      console.error('Error removing image from the slider.', error);
+      setMessage('Error removing image from the slider.');
       setMessageType('error');
     }
   };
@@ -111,11 +111,11 @@ const SliderOrderForm = () => {
   
     try {
       await apiClient.patch(`/sliders/${currentSlider}/update_order/`, { image_id: imageId, new_order: newOrder });
-      setMessage('Kolejność zdjęć została zaktualizowana.');
+      setMessage('Image order has been updated.');
       setMessageType('success');
     } catch (error) {
-      console.error('Błąd przy zmianie kolejności zdjęć:', error);
-      setMessage('Błąd przy zmianie kolejności zdjęć.');
+      console.error('Error updating image order.', error);
+      setMessage('Error updating image order.');
       setMessageType('error');
     }
   };  
@@ -139,13 +139,13 @@ const SliderOrderForm = () => {
           onClick={handleCreateSlider}
           className="bg-blue-500 px-6 py-3 text-white rounded-lg shadow-md hover:bg-blue-600 transition-all"
         >
-          Utwórz nowy slajder
+          Create New Slider
         </button>
       </div>
 
       {/* Lista slajderów */}
       <div className="text-center mb-6">
-        <h3>Wybierz slajder do edycji</h3>
+        <h3>Select a slider to edit</h3>
         {sliders.map((slider) => (
           <button
             key={slider.id}
@@ -164,7 +164,7 @@ const SliderOrderForm = () => {
             onClick={() => handleDeleteSlider(currentSlider)}
             className="bg-red-500 px-6 py-3 text-white rounded-lg shadow-md hover:bg-red-600 transition-all"
           >
-            Usuń wybrany slajder
+            Delete selected slider
           </button>
         </div>
       )}
@@ -172,7 +172,7 @@ const SliderOrderForm = () => {
       {/* Edycja zdjęć w slajderze */}
       {currentSlider !== null && (
         <div>
-          <h3>Zdjęcia w slajderze</h3>
+          <h3>Images in the slider</h3>
           <ul className="space-y-4">
             {images.map((image) => (
               <li key={image.id} className="flex justify-between items-center space-x-4">
@@ -193,19 +193,19 @@ const SliderOrderForm = () => {
                       onClick={() => handleAddImageToSlider(image.id)}
                       className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all"
                     >
-                      Dodaj
+                      Add
                     </button>
                   ) : (
                     <button
                       onClick={() => handleRemoveImageFromSlider(image.id)}
                       className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all"
                     >
-                      Usuń
+                      Remove
                     </button>
                   )}
                   <input
                     type="number"
-                    placeholder="Kolejność"
+                    placeholder="No."
                     onChange={(e) => handleOrderChange(image.id, +e.target.value)}
                     className="p-2 border border-gray-300 rounded-lg"
                     style={{ width: '60px' }}

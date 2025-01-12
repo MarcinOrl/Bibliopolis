@@ -27,7 +27,7 @@ const BookPage = () => {
           const response = await apiClient.get(`/books/${id}/`);
           setBook(response.data);
         } catch (error) {
-          console.error('Błąd pobierania książki:', error);
+          console.error('Error fetching book:', error);
         }
       };
       fetchBookDetails();
@@ -60,7 +60,7 @@ const BookPage = () => {
   };
 
   if (!book) {
-    return <div>Ładowanie książki...</div>;
+    return <div>Loading book...</div>;
   }
 
   return (
@@ -80,26 +80,27 @@ const BookPage = () => {
           {/* Informacje o książce */}
           <div className="flex-grow">
             <h1 className="text-3xl font-bold mb-4">{book.title}</h1>
-            <p className="text-lg accent-text mb-2">Autor: <span className="font-semibold">{book.author}</span></p>
+            <p className="text-lg accent-text mb-2">Author: <span className="font-semibold">{book.author}</span></p>
             <p className="accent-text text-base mb-6">{book.description}</p>
-            <p className="text-2xl font-bold text-green-700 mb-6">{book.price} zł</p>
+            <p className="text-2xl font-bold text-green-700 mb-6">{book.price} PLN</p>
             <button onClick={addToCart} className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 transition">
-              Dodaj do koszyka
+            Add to cart
             </button>
           </div>
         </div>
         {/* Sekcja komentarzy */}
         <div className="mt-12">
-          <h2 className="text-2xl font-bold mb-4">Komentarze</h2>
+          <h2 className="text-2xl font-bold mb-4">Comments</h2>
           <div className="border rounded p-4 bg-gray-50 shadow">
-            <p className="text-gray-600 italic">Sekcja komentarzy jest w trakcie przygotowania.</p>
+            <p className="text-gray-600 italic">The comment section is under preparation.
+            </p>
           </div>
         </div>
         {/* Modal z powiadomieniem o dodaniu książki */}
         {isModalOpen && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="secondary-color p-6 rounded-lg shadow-lg max-w-lg w-full">
-              <h2 className="text-xl font-bold mb-4">Książka została dodana do koszyka</h2>
+              <h2 className="text-xl font-bold mb-4">The book has been added to the cart</h2>
               <div className="flex gap-4 items-center">
                 <img
                   src={book.image}
@@ -116,13 +117,13 @@ const BookPage = () => {
                   onClick={goToCart}
                   className="bg-blue-500 accent-text px-6 py-2 rounded hover:bg-blue-600 transition"
                 >
-                  Przejdź do koszyka
+                  Go to cart
                 </button>
                 <button
                   onClick={closeModal}
                   className="bg-gray-500 accent-text px-6 py-2 rounded hover:bg-gray-400 transition"
                 >
-                  Zamknij
+                  Close
                 </button>
               </div>
             </div>

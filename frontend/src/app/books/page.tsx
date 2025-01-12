@@ -22,8 +22,8 @@ const BooksPage = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [books, setBooks] = useState<Book[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false); // Stan do kontrolowania modala
-  const [bookToAdd, setBookToAdd] = useState<Book | null>(null); // Książka dodana do koszyka
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [bookToAdd, setBookToAdd] = useState<Book | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -32,7 +32,7 @@ const BooksPage = () => {
         const response = await apiClient.get('/categories/');
         setCategories(response.data);
       } catch (error) {
-        console.error('Błąd pobierania kategorii:', error);
+        console.error('Error fetching categories:', error);
       }
     };
     fetchCategories();
@@ -47,7 +47,7 @@ const BooksPage = () => {
         const response = await apiClient.get(endpoint);
         setBooks(response.data);
       } catch (error) {
-        console.error('Błąd pobierania książek:', error);
+        console.error('Error fetching books:', error);
       }
     };
     fetchBooks();
@@ -83,7 +83,7 @@ const BooksPage = () => {
     <div className="flex">
       {/* Lewa kolumna z kategoriami */}
       <aside className="p-4 h-fit shadow-md secondary-color">
-        <h2 className="text-xl font-bold mb-4">Kategorie</h2>
+        <h2 className="text-xl font-bold mb-4">Categories</h2>
         <ul className="space-y-2">
           <li
             onClick={() => setSelectedCategory(null)}
@@ -91,7 +91,7 @@ const BooksPage = () => {
               selectedCategory === null ? 'bg-blue-500 accent-text' : 'accent-text'
             }`}
           >
-            Wszystkie
+            All
           </li>
           {categories.map((category) => (
             <li
@@ -110,7 +110,7 @@ const BooksPage = () => {
       {/* Główna sekcja z książkami */}
       <main className="flex-grow p-6">
         <h2 className="text-2xl font-bold mb-6">
-          {selectedCategory ? 'Książki z wybranej kategorii' : 'Wszystkie książki'}
+          {selectedCategory ? 'Books from the selected category' : 'All books'}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {books.map((book) => (
@@ -126,8 +126,8 @@ const BooksPage = () => {
               />
               <div className="p-4">
                 <h3 className="text-lg font-bold">{book.title}</h3>
-                <p className="text-sm">Autor: {book.author}</p>
-                <p className="text-xl font-bold mt-4">{book.price} zł</p>
+                <p className="text-sm">Author: {book.author}</p>
+                <p className="text-xl font-bold mt-4">{book.price} PLN</p>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -135,7 +135,7 @@ const BooksPage = () => {
                   }}
                   className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 transition mt-4"
                 >
-                  Dodaj do koszyka
+                  Add to Cart
                 </button>
               </div>
             </div>
@@ -147,7 +147,7 @@ const BooksPage = () => {
       {isModalOpen && bookToAdd && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="secondary-color p-6 rounded-lg shadow-lg max-w-lg w-full">
-            <h2 className="text-xl font-bold mb-4">Książka została dodana do koszyka</h2>
+            <h2 className="text-xl font-bold mb-4">The book has been added to the cart</h2>
             <div className="flex gap-4 items-center">
               <img
                 src={bookToAdd.image}
@@ -156,7 +156,7 @@ const BooksPage = () => {
               />
               <div>
                 <h3 className="text-lg font-semibold">{bookToAdd.title}</h3>
-                <p>{bookToAdd.price} zł</p>
+                <p>{bookToAdd.price} PLN</p>
               </div>
             </div>
             <div className="mt-4 flex gap-4">
@@ -164,13 +164,13 @@ const BooksPage = () => {
                 onClick={goToCart}
                 className="bg-blue-500 accent-text px-6 py-2 rounded hover:bg-blue-600 transition"
               >
-                Przejdź do koszyka
+                Go to Cart
               </button>
               <button
                 onClick={closeModal}
                 className="bg-gray-500 accent-text px-6 py-2 rounded hover:bg-gray-400 transition"
               >
-                Zamknij
+                Close
               </button>
             </div>
           </div>

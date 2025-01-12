@@ -101,12 +101,12 @@ const SliderComponent: React.FC = () => {
         <div className="mb-4 text-center flex justify-center gap-4">
           <Link href="/add_image">
             <button className="bg-blue-500 px-6 py-3 text-white rounded-lg shadow-md hover:bg-blue-600 transition-all">
-              Dodaj zdjęcie
+              Add Image
             </button>
           </Link>
           <Link href="/slider_edit">
             <button className="bg-blue-500 px-6 py-3 text-white rounded-lg shadow-md hover:bg-blue-600 transition-all">
-              Zarządzaj slajderami
+              Manage Sliders
             </button>
           </Link>
         </div>
@@ -119,13 +119,13 @@ const SliderComponent: React.FC = () => {
             onClick={() => setCurrentSlider(index)}
             className={`border border-green-500  px-4 py-2 mx-2 rounded-lg accent-text primary-color`}
           >
-            Zestaw {index + 1}
+            Slider{index + 1}
           </button>
         ))}
       </div>
       <div className="slider-wrapper">
         {images.length === 0 ? (
-          <p className="text-center">Brak zdjęć w tym slajderze</p>
+          <p className="text-center">No images in this slider</p>
         ) : (
           <Slider {...settings}>
             {images.map((image: any) => (

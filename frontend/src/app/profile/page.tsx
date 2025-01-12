@@ -61,7 +61,7 @@ const Profile: React.FC = () => {
             })
             .catch(error => {
                 console.error("Error selecting theme.", error);
-                alert("Błąd przy zmianie motywu.");
+                alert("Error changing theme.");
             });
     };
 
@@ -70,7 +70,7 @@ const Profile: React.FC = () => {
     return (
         <div>
             <div className="container mx-auto p-4">
-                <h1 className="text-xl py-4 font-semibold">Witaj, {userData.username}</h1>
+                <h1 className="text-xl py-4 font-semibold">Hello, {userData.username}</h1>
                 <ul className="flex flex-wrap gap-4">
                     {themes.map((theme) => (
                         <li key={theme.id} className="p-4 border rounded flex-shrink-0">
@@ -85,7 +85,7 @@ const Profile: React.FC = () => {
                                     onClick={() => handleSelectTheme(theme.id)}
                                     className="ml-2 bg-blue-500 text-white px-4 py-2 rounded"
                                 >
-                                    Wybierz
+                                    Select
                                 </button>
                             </div>
                         </li>

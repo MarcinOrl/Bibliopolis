@@ -78,22 +78,22 @@ const OrdersPage: React.FC = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-xl py-4 font-semibold">Zamówienia</h1>
+      <h1 className="text-xl py-4 font-semibold">Orders</h1>
       <div className="space-y-4">
         {orders.map(order => (
-          <div key={order.id} className="p-4 border rounded flex justify-between items-center primary-light accent-text shadow-lg">
+          <div key={order.id} className="p-4 rounded flex justify-between items-center primary-light accent-text shadow-lg">
             <div>
-              <p>ID Zamówienia: {order.id}</p>
-              <p>Użytkownik: {order.username}</p>
+              <p>Order ID: {order.id}</p>
+              <p>User: {order.username}</p>
               <p>Status: {order.status}</p>
-              <p>Data zamówienia: {new Date(order.created_at).toLocaleString()}</p>
-              <p>Całkowita cena: {order.total_price} zł</p>
+              <p>Order Date: {new Date(order.created_at).toLocaleString()}</p>
+              <p>Total Price: {order.total_price} zł</p>
             </div>
             <button
               onClick={() => handleViewDetails(order.id)}
               className="bg-blue-500 text-white px-4 py-2 rounded"
             >
-              Szczegóły
+              Details
             </button>
           </div>
         ))}
@@ -102,39 +102,39 @@ const OrdersPage: React.FC = () => {
       {isModalOpen && selectedOrder && (
         <div className="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-50 z-50">
           <div className="secondary-color rounded-lg shadow-lg p-6 w-96 max-w-lg space-y-6">
-            <h2 className="text-xl font-semibold text-center mb-4 accent-color">Szczegóły zamówienia #{selectedOrder.id}</h2>
+            <h2 className="text-xl font-semibold text-center mb-4 accent-color">Order Details #{selectedOrder.id}</h2>
             <div className="space-y-4">
               <div className="p-4 rounded-lg shadow-sm">
-                <p className="font-medium accent-color">Użytkownik: <span className="font-normal">{selectedOrder.username}</span></p>
+                <p className="font-medium accent-color">User: <span className="font-normal">{selectedOrder.username}</span></p>
               </div>
               {orderDetails.map((item, index) => (
                 <div key={index} className="primary-color p-4 rounded-lg shadow-sm">
-                  <p className="font-medium accent-color">Tytuł książki: <span className="font-normal">{item.book_title}</span></p>
-                  <p className="font-medium accent-color">Ilość: <span className="font-normal">{item.quantity}</span></p>
-                  <p className="font-medium accent-color">Całkowita cena: <span className="font-normal">{item.total_price} zł</span></p>
+                  <p className="font-medium accent-color">Book Title: <span className="font-normal">{item.book_title}</span></p>
+                  <p className="font-medium accent-color">Quantity: <span className="font-normal">{item.quantity}</span></p>
+                  <p className="font-medium accent-color">Total Price: <span className="font-normal">{item.total_price} zł</span></p>
                 </div>
               ))}
             </div>
 
             {(userData.is_admin || userData.is_moderator) && (
               <div>
-                <label htmlFor="status" className="block font-medium">Zmiana statusu zamówienia:</label>
+                <label htmlFor="status" className="block font-medium">Change Order Status:</label>
                 <select
                   id="status"
                   value={newStatus}
                   onChange={(e) => setNewStatus(e.target.value)}
                   className="w-full p-2 mt-2 border rounded-lg cent accent-text secondary-color"
                 >
-                  <option value="pending">Oczekujące</option>
-                  <option value="shipped">Wysłane</option>
-                  <option value="delivered">Dostarczone</option>
-                  <option value="cancelled">Anulowane</option>
+                  <option value="pending">Pending</option>
+                  <option value="shipped">Shipped</option>
+                  <option value="delivered">Delivered</option>
+                  <option value="cancelled">Cancelled</option>
                 </select>
                 <button
                   onClick={() => handleStatusChange(selectedOrder.id)}
                   className="mt-4 bg-blue-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-600 transition duration-300"
                 >
-                  Zmień status
+                  Change Status
                 </button>
               </div>
             )}
@@ -144,7 +144,7 @@ const OrdersPage: React.FC = () => {
                 onClick={handleCloseModal}
                 className="bg-red-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-600 transition duration-300"
               >
-                Zamknij
+                Close
               </button>
             </div>
           </div>

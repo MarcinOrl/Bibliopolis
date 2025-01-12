@@ -53,11 +53,11 @@ const Checkout = () => {
         },
       });
   
-      alert('Zamówienie zostało złożone!');
+      alert('The order has been placed!');
       localStorage.removeItem('cart');
       router.push('/orders');
     } catch (error) {
-      console.error('Błąd składania zamówienia:', error);
+      console.error('Error placing the order:', error);
     }
   };
 
@@ -66,16 +66,16 @@ const Checkout = () => {
   return (
     <div className="flex justify-center items-center min-h-screen p-6">
       <div className="max-w-lg w-full secondary-color rounded-lg shadow-lg p-8">
-        <h1 className="text-3xl font-bold text-center mb-6 accent-color">Składanie zamówienia</h1>
+        <h1 className="text-3xl font-bold text-center mb-6 accent-color">Checkout</h1>
 
         <div className="mb-6">
           <label htmlFor="firstName" className="block text-lg font-semibold accent-color mb-2">
-            Imię
+            First Name
           </label>
           <input
             type="text"
             id="firstName"
-            placeholder="Wpisz imię"
+            placeholder="Enter first name"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 secondary-color"
@@ -84,12 +84,12 @@ const Checkout = () => {
 
         <div className="mb-6">
           <label htmlFor="lastName" className="block text-lg font-semibold accent-color mb-2">
-            Nazwisko
+            Last Name
           </label>
           <input
             type="text"
             id="lastName"
-            placeholder="Wpisz nazwisko"
+            placeholder="Enter last name"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 secondary-color"
@@ -103,7 +103,7 @@ const Checkout = () => {
           <input
             type="email"
             id="email"
-            placeholder="Wpisz email"
+            placeholder="Enter email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 secondary-color"
@@ -112,12 +112,12 @@ const Checkout = () => {
 
         <div className="mb-6">
           <label htmlFor="shippingAddress" className="block text-lg font-semibold accent-color mb-2">
-            Adres wysyłki
+            Shipping Address
           </label>
           <input
             type="text"
             id="shippingAddress"
-            placeholder="Wpisz adres wysyłki"
+            placeholder="Enter shipping address"
             value={shippingAddress}
             onChange={(e) => setShippingAddress(e.target.value)}
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 secondary-color"
@@ -126,12 +126,12 @@ const Checkout = () => {
 
         <div className="mb-6">
           <label htmlFor="city" className="block text-lg font-semibold accent-color mb-2">
-            Miasto
+            City
           </label>
           <input
             type="text"
             id="city"
-            placeholder="Wpisz miasto"
+            placeholder="Enter city"
             value={city}
             onChange={(e) => setCity(e.target.value)}
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 secondary-color"
@@ -140,12 +140,12 @@ const Checkout = () => {
 
         <div className="mb-6">
           <label htmlFor="postalCode" className="block text-lg font-semibold accent-color mb-2">
-            Kod pocztowy
+            Postal Code
           </label>
           <input
             type="text"
             id="postalCode"
-            placeholder="Wpisz kod pocztowy"
+            placeholder="Enter postal code"
             value={postalCode}
             onChange={(e) => setPostalCode(e.target.value)}
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 secondary-color"
@@ -154,12 +154,12 @@ const Checkout = () => {
 
         <div className="mb-6">
           <label htmlFor="phoneNumber" className="block text-lg font-semibold accent-color mb-2">
-            Numer telefonu
+            Phone Number
           </label>
           <input
             type="text"
             id="phoneNumber"
-            placeholder="Wpisz numer telefonu"
+            placeholder="Enter phone number"
             value={phoneNumber}
             onChange={(e) => setPhoneNumber(e.target.value)}
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 secondary-color"
@@ -170,7 +170,7 @@ const Checkout = () => {
           onClick={handleOrderSubmit}
           className="w-full bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 transition"
         >
-          Złóż zamówienie
+          Place Order
         </button>
       </div>
     </div>

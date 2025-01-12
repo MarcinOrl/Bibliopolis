@@ -16,7 +16,7 @@ const Register = () => {
     e.preventDefault();
   
     if (password !== password2) {
-      setError('Hasła muszą być takie same.');
+      setError('Passwords must match.');
       return;
     }
   
@@ -29,45 +29,45 @@ const Register = () => {
       });
       router.push('/login');
     } catch (err) {
-      setError('Błąd rejestracji. Spróbuj ponownie.');
-      console.error('Błąd rejestracji:', err);
+      setError('Registration error. Please try again.');
+      console.error('Registration error:', err);
     }
   };  
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4 text-center">Rejestracja</h1>
+      <h1 className="text-2xl font-bold mb-4 text-center">Registration</h1>
       {error && <p className="text-red-500 text-center">{error}</p>}
       <form onSubmit={handleSubmit} className="max-w-lg mx-auto space-y-4">
         <input
           type="text"
-          placeholder="Nazwa użytkownika"
+          placeholder="Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded"
+          className="w-full p-3 border secondary-color accent-text border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
         />
         <input
           type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded"
+          className="w-full p-3 border secondary-color accent-text border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
         />
         <input
           type="password"
-          placeholder="Hasło"
+          placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded"
+          className="w-full p-3 border secondary-color accent-text border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
         />
         <input
           type="password"
-          placeholder="Potwierdź hasło"
+          placeholder="Confirm password"
           value={password2}
           onChange={(e) => setPassword2(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded"
+          className="w-full p-3 border secondary-color accent-text border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
         />
-        <button type="submit" className="w-full p-2 bg-blue-500 text-white rounded">Zarejestruj</button>
+        <button type="submit" className="w-full p-2 bg-blue-500 text-white rounded">Register</button>
       </form>
     </div>
   );

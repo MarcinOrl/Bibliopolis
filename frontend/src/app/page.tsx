@@ -52,11 +52,11 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold text-center mb-8">Witaj w Bibliopolis!</h1>
-      <h2 className="text-2xl font-semibold text-center mb-6">Polecane książki</h2>
+      <h1 className="text-3xl font-bold text-center mb-8">Welcome to Bibliopolis!</h1>
+      <h2 className="text-2xl font-semibold text-center mb-6">Recommended Books</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 justify-items-center">
         {books.length === 0 ? (
-          <p>Brak książek do wyświetlenia.</p>
+          <p>No books to display.</p>
         ) : (
           books.map((book) => (
             <div
@@ -71,8 +71,8 @@ const HomePage: React.FC = () => {
               />
               <div className="p-4">
                 <h3 className="text-lg font-bold accent-text">{book.title}</h3>
-                <p className="text-sm accent-text">Autor: {book.author}</p>
-                <p className="text-xl font-bold mt-4 accent-text">{book.price} zł</p>
+                <p className="text-sm accent-text">Author: {book.author}</p>
+                <p className="text-xl font-bold mt-4 accent-text">{book.price} PLN</p>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -80,7 +80,7 @@ const HomePage: React.FC = () => {
                   }}
                   className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 transition mt-4"
                 >
-                  Dodaj do koszyka
+                  Add to Cart
                 </button>
               </div>
             </div>
@@ -92,7 +92,7 @@ const HomePage: React.FC = () => {
       {isModalOpen && bookToAdd && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="secondary-color p-6 rounded-lg shadow-lg max-w-lg w-full">
-            <h2 className="text-xl font-bold mb-4">Książka została dodana do koszyka</h2>
+            <h2 className="text-xl font-bold mb-4">The book has been added to the cart</h2>
             <div className="flex gap-4 items-center">
               <img
                 src={bookToAdd.image}
@@ -101,7 +101,7 @@ const HomePage: React.FC = () => {
               />
               <div>
                 <h3 className="text-lg font-semibold">{bookToAdd.title}</h3>
-                <p>{bookToAdd.price} zł</p>
+                <p>{bookToAdd.price} PLN</p>
               </div>
             </div>
             <div className="mt-4 flex gap-4">
@@ -109,13 +109,13 @@ const HomePage: React.FC = () => {
                 onClick={goToCart}
                 className="bg-blue-500 accent-text px-6 py-2 rounded hover:bg-blue-600 transition"
               >
-                Przejdź do koszyka
+                Go to Cart
               </button>
               <button
                 onClick={closeModal}
                 className="bg-gray-500 accent-text px-6 py-2 rounded hover:bg-gray-400 transition"
               >
-                Zamknij
+                Close
               </button>
             </div>
           </div>
