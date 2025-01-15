@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from ckeditor.fields import RichTextField
 
 
 class Book(models.Model):
@@ -7,7 +8,7 @@ class Book(models.Model):
     author = models.CharField(
         max_length=100, null=True, blank=True, default="Autor nieznany"
     )
-    description = models.TextField(null=True, blank=True)
+    description = RichTextField(null=True, blank=True)
     price = models.DecimalField(
         max_digits=10, decimal_places=2, null=True, blank=True, default=1000.00
     )
@@ -20,6 +21,7 @@ class Book(models.Model):
         blank=True,
         related_name="books",
     )
+    approved = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title
@@ -31,6 +33,38 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Comment(models.Model):
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="comments")
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    approved = models.BooleanField(null=True)
+
+    def __str__(self):
+        return f"Comment by {self.user.username} on {self.book.title}"
+
+
+class ModeratorCategory(models.Model):
+    moderator = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        limit_choices_to={"userprofile__is_moderator": True},
+    )
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.moderator.username} - {self.category.name}"
+
+
+class EventLog(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Zdarzenie: {self.message} ({self.created_at})"
 
 
 class Theme(models.Model):

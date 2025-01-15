@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Book, GalleryImage, Slider, Category, Order, OrderItem
+from .models import Book, GalleryImage, Slider, Category, Order, OrderItem, Comment
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -20,6 +20,15 @@ class BookSerializer(serializers.ModelSerializer):
         if obj.image:
             return request.build_absolute_uri(obj.image.url)
         return None
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source="user.username", read_only=True)
+
+    class Meta:
+        model = Comment
+        fields = ["id", "username", "content", "approved", "created_at"]
+        read_only_fields = ["id", "user", "approved", "created_at"]
 
 
 class GalleryImageSerializer(serializers.ModelSerializer):

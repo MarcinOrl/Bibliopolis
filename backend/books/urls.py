@@ -18,6 +18,9 @@ from .views import (
     OrderListView,
     add_image_to_slider,
     user_status,
+    product_comments,
+    approve_comment,
+    reject_comment,
 )
 
 urlpatterns = [
@@ -26,6 +29,9 @@ urlpatterns = [
     path("books/", BookListAPIView.as_view(), name="book-list"),
     path("books/<int:pk>/", BookDetailAPIView.as_view(), name="book-detail"),
     path("categories/", CategoryListAPIView.as_view(), name="category-list"),
+    path("books/<int:book_id>/comments/", product_comments, name="product_comments"),
+    path("comments/<int:comment_id>/approve/", approve_comment, name="approve_comment"),
+    path("comments/<int:comment_id>/reject/", reject_comment, name="reject_comment"),
     path("theme/default/", ThemeView.as_view(), name="theme"),
     path("themes/", ThemeListView.as_view(), name="theme-list"),
     path("themes/select/", SelectedThemeView.as_view(), name="select-theme"),

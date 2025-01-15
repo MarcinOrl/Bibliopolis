@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.exceptions import NotFound
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from django.contrib.auth.decorators import login_required
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import serializers, views, status
@@ -16,6 +16,7 @@ from .serializers import (
     SliderSerializer,
     CategorySerializer,
     OrderSerializer,
+    CommentSerializer,
 )
 from .models import (
     Book,
@@ -26,6 +27,7 @@ from .models import (
     Category,
     Order,
     OrderItem,
+    Comment,
 )
 
 
@@ -56,6 +58,65 @@ class CategoryListAPIView(APIView):
         categories = Category.objects.all()
         serializer = CategorySerializer(categories, many=True)
         return Response(serializer.data)
+
+
+@api_view(["GET", "POST"])
+def product_comments(request, book_id):
+    if request.method == "GET":
+        comments = Comment.objects.filter(book_id=book_id, approved=True)
+
+        if request.user.is_authenticated and (
+            request.user.userprofile.is_admin or request.user.userprofile.is_moderator
+        ):
+            comments = Comment.objects.filter(book_id=book_id)
+
+        serializer = CommentSerializer(comments, many=True)
+        return Response(serializer.data)
+
+    elif request.method == "POST":
+        if not request.user.is_authenticated:
+            return Response(
+                {"error": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED
+            )
+
+        book = Book.objects.get(id=book_id)
+        serializer = CommentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user, book=book)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def approve_comment(request, comment_id):
+    if not (request.user.userprofile.is_moderator or request.user.userprofile.is_admin):
+        return Response({"error": "Forbidden"}, status=403)
+
+    try:
+        comment = Comment.objects.get(id=comment_id)
+    except Comment.DoesNotExist:
+        return Response({"error": "Comment not found"}, status=404)
+
+    comment.approved = True
+    comment.save()
+    return Response({"success": "Comment approved"})
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def reject_comment(request, comment_id):
+    if not (request.user.userprofile.is_moderator or request.user.userprofile.is_admin):
+        return Response({"error": "Forbidden"}, status=403)
+
+    try:
+        comment = Comment.objects.get(id=comment_id)
+    except Comment.DoesNotExist:
+        return Response({"error": "Comment not found"}, status=404)
+
+    comment.approved = False
+    comment.save()
+    return Response({"success": "Comment rejected"})
 
 
 @api_view(["GET"])
