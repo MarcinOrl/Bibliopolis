@@ -13,15 +13,27 @@ interface Book {
   image: string;
 }
 
+interface Event {
+  id: number;
+  action: string;
+  description: string;
+  created_at: string;
+}
+
 const HomePage: React.FC = () => {
   const [books, setBooks] = useState<Book[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [bookToAdd, setBookToAdd] = useState<Book | null>(null);
+  const [events, setEvents] = useState<Event[]>([]);
   const router = useRouter();
 
   useEffect(() => {
     apiClient.get('/books/')
       .then(response => setBooks(response.data.slice(0, 3)))
+      .catch(error => console.error(error));
+
+    apiClient.get('/events/')
+      .then(response => setEvents(response.data))
       .catch(error => console.error(error));
   }, []);
 
@@ -54,6 +66,7 @@ const HomePage: React.FC = () => {
     <div className="container mx-auto p-6">
       <h1 className="text-3xl font-bold text-center mb-8">Welcome to Bibliopolis!</h1>
       <h2 className="text-2xl font-semibold text-center mb-6">Recommended Books</h2>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 justify-items-center">
         {books.length === 0 ? (
           <p>No books to display.</p>
@@ -86,6 +99,23 @@ const HomePage: React.FC = () => {
             </div>
           ))
         )}
+      </div>
+
+      {/* Wyświetlanie zdarzeń pod książkami */}
+      <div className="mt-8">
+        <div>
+          {events.map((event, index) => (
+            <div key={`${event.id}-${index}`} className="secondary-color shadow-md p-4 rounded-lg mb-4">
+              <div className="flex items-center justify-between">
+                <p className="text-lg font-semibold accent-text">{event.description}</p>
+                {event.action && (
+                  <span className="bg-blue-500 accent-text text-xs py-1 px-3 rounded-full">{event.action}</span>
+                )}
+              </div>
+              <small className="text-sm accent-text">{new Date(event.created_at).toLocaleString()}</small>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Modal */}

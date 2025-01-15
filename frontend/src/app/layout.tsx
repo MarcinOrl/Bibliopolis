@@ -6,7 +6,7 @@ import "./globals.css";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
-import { UserProvider } from '../utils/UserContext'; // Importowanie UserProvider
+import { UserProvider } from '../utils/UserContext';
 import ThemeManager from "../utils/ThemeManager";
 
 const geistSans = localFont({

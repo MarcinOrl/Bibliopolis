@@ -46,6 +46,21 @@ class Comment(models.Model):
         return f"Comment by {self.user.username} on {self.book.title}"
 
 
+class Event(models.Model):
+    ACTIONS = [
+        ("COMMENT_APPROVED", "Comment Approved"),
+        ("COMMENT_REJECTED", "Comment Rejected"),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    action = models.CharField(max_length=50, choices=ACTIONS)
+    description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.action}"
+
+
 class ModeratorCategory(models.Model):
     moderator = models.ForeignKey(
         User,

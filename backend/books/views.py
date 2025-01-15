@@ -17,6 +17,7 @@ from .serializers import (
     CategorySerializer,
     OrderSerializer,
     CommentSerializer,
+    EventSerializer,
 )
 from .models import (
     Book,
@@ -28,6 +29,7 @@ from .models import (
     Order,
     OrderItem,
     Comment,
+    Event,
 )
 
 
@@ -100,6 +102,13 @@ def approve_comment(request, comment_id):
 
     comment.approved = True
     comment.save()
+
+    Event.objects.create(
+        user=comment.user,
+        action="COMMENT_APPROVED",
+        description=f"Your comment on '{comment.book.title}' has been approved.",
+    )
+
     return Response({"success": "Comment approved"})
 
 
@@ -116,7 +125,24 @@ def reject_comment(request, comment_id):
 
     comment.approved = False
     comment.save()
+
+    Event.objects.create(
+        user=comment.user,
+        action="COMMENT_REJECTED",
+        description=f"Your comment on '{comment.book.title}' has been rejected.",
+    )
+
     return Response({"success": "Comment rejected"})
+
+
+@api_view(["GET"])
+def get_user_events(request):
+    if not request.user.is_authenticated:
+        return Response({"error": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
+
+    events = Event.objects.filter(user=request.user).order_by("-created_at")
+    serializer = EventSerializer(events, many=True)
+    return Response(serializer.data)
 
 
 @api_view(["GET"])

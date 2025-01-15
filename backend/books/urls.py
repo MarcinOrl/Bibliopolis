@@ -21,6 +21,7 @@ from .views import (
     product_comments,
     approve_comment,
     reject_comment,
+    get_user_events,
 )
 
 urlpatterns = [
@@ -32,6 +33,7 @@ urlpatterns = [
     path("books/<int:book_id>/comments/", product_comments, name="product_comments"),
     path("comments/<int:comment_id>/approve/", approve_comment, name="approve_comment"),
     path("comments/<int:comment_id>/reject/", reject_comment, name="reject_comment"),
+    path("events/", get_user_events, name="get_user_events"),
     path("theme/default/", ThemeView.as_view(), name="theme"),
     path("themes/", ThemeListView.as_view(), name="theme-list"),
     path("themes/select/", SelectedThemeView.as_view(), name="select-theme"),

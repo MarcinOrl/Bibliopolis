@@ -11,6 +11,7 @@ from .models import (
     UserProfile,
     Order,
     OrderItem,
+    Event,
 )
 
 
@@ -72,3 +73,4 @@ class OrderItemAdmin(admin.ModelAdmin):
 admin.site.register(Theme)
 admin.site.register(GalleryImage)
 admin.site.register(Slider)
+admin.site.register(Event)

@@ -1,5 +1,14 @@
 from rest_framework import serializers
-from .models import Book, GalleryImage, Slider, Category, Order, OrderItem, Comment
+from .models import (
+    Book,
+    GalleryImage,
+    Slider,
+    Category,
+    Order,
+    OrderItem,
+    Comment,
+    Event,
+)
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -29,6 +38,12 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = ["id", "username", "content", "approved", "created_at"]
         read_only_fields = ["id", "user", "approved", "created_at"]
+
+
+class EventSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Event
+        fields = ["action", "description", "created_at"]
 
 
 class GalleryImageSerializer(serializers.ModelSerializer):
