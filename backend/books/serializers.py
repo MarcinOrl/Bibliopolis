@@ -8,21 +8,27 @@ from .models import (
     OrderItem,
     Comment,
     Event,
+    UserProfile,
 )
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    moderators = serializers.PrimaryKeyRelatedField(
+        queryset=UserProfile.objects.filter(is_moderator=True), many=True
+    )
+
     class Meta:
         model = Category
-        fields = "__all__"
+        fields = ["id", "name", "moderators"]
 
 
 class BookSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField()
+    category = CategorySerializer()
 
     class Meta:
         model = Book
-        fields = ["id", "title", "author", "description", "price", "image"]
+        fields = ["id", "title", "author", "description", "price", "image", "category"]
 
     def get_image(self, obj):
         request = self.context.get("request")

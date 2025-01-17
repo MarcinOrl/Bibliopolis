@@ -28,8 +28,13 @@ class Book(models.Model):
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    name = models.CharField(max_length=255)
+    moderators = models.ManyToManyField(
+        User,
+        limit_choices_to={"userprofile__is_moderator": True},
+        related_name="moderated_categories",
+        blank=True,
+    )
 
     def __str__(self):
         return self.name
@@ -45,6 +50,10 @@ class Comment(models.Model):
     def __str__(self):
         return f"Comment by {self.user.username} on {self.book.title}"
 
+    @property
+    def category(self):
+        return self.book.category
+
 
 class Event(models.Model):
     ACTIONS = [
@@ -59,18 +68,6 @@ class Event(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.action}"
-
-
-class ModeratorCategory(models.Model):
-    moderator = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        limit_choices_to={"userprofile__is_moderator": True},
-    )
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f"{self.moderator.username} - {self.category.name}"
 
 
 class EventLog(models.Model):

@@ -6,6 +6,13 @@ import { useRouter } from "next/navigation";
 import apiClient from "../../../utils/api";
 import { useUser } from "../../../utils/UserContext";
 
+
+interface Category {
+  id: number;
+  name: string;
+  moderators: number[];
+}
+
 interface Book {
   id: number;
   title: string;
@@ -13,6 +20,7 @@ interface Book {
   description: string;
   price: string;
   image: string;
+  category: Category;
 }
 
 interface Comment {
@@ -150,7 +158,8 @@ const BookPage = () => {
                 <small className="text-sm accent-text">{new Date(comment.created_at).toLocaleString()}</small>
                 
                 {/* Zatwierdzanie lub odrzucanie komentarza przez admina/moda */}
-                {userData?.is_admin || userData?.is_moderator ? (
+                {(userData?.is_admin || 
+                  (userData?.is_moderator && book.category?.moderators?.includes(userData.id))) && (
                   <div className="mt-2 flex gap-2">
                     {/* Przycisk Approve tylko, gdy komentarz czeka na zatwierdzenie */}
                     {comment.approved === null && (
@@ -161,7 +170,6 @@ const BookPage = () => {
                         Approve
                       </button>
                     )}
-                    
                     {/* Przycisk Reject tylko, gdy komentarz czeka na zatwierdzenie */}
                     {comment.approved === null && (
                       <button
@@ -171,8 +179,10 @@ const BookPage = () => {
                         Reject
                       </button>
                     )}
+                    {comment.approved && <span className="text-green-500">Approved</span>}
+                    {comment.approved === false && <span className="text-red-500">Rejected</span>}
                   </div>
-                ) : null}
+                )}
               </div>
             ))}
           </div>

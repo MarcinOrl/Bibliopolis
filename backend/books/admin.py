@@ -2,9 +2,7 @@ from django.contrib import admin
 from .models import (
     Book,
     Category,
-    ModeratorCategory,
     Comment,
-    EventLog,
     Theme,
     GalleryImage,
     Slider,
@@ -32,15 +30,8 @@ class BookAdmin(admin.ModelAdmin):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ("name", "created_at")
-    search_fields = ("name",)
-    ordering = ("-created_at",)
-
-
-@admin.register(ModeratorCategory)
-class ModeratorCategoryAdmin(admin.ModelAdmin):
-    list_display = ("moderator", "category")
-    search_fields = ("moderator__username", "category__name")
+    list_display = ("name",)
+    filter_horizontal = ("moderators",)
 
 
 @admin.register(Comment)
@@ -50,10 +41,10 @@ class CommentAdmin(admin.ModelAdmin):
     list_filter = ("approved",)
 
 
-@admin.register(EventLog)
-class EventLogAdmin(admin.ModelAdmin):
-    list_display = ("user", "message", "created_at")
-    search_fields = ("message", "user__username")
+# @admin.register(EventLog)
+# class EventLogAdmin(admin.ModelAdmin):
+#     list_display = ("user", "message", "created_at")
+#     search_fields = ("message", "user__username")
 
 
 @admin.register(Order)

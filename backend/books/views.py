@@ -1,4 +1,5 @@
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -65,12 +66,17 @@ class CategoryListAPIView(APIView):
 @api_view(["GET", "POST"])
 def product_comments(request, book_id):
     if request.method == "GET":
+        book = get_object_or_404(Book, id=book_id)
         comments = Comment.objects.filter(book_id=book_id, approved=True)
 
-        if request.user.is_authenticated and (
-            request.user.userprofile.is_admin or request.user.userprofile.is_moderator
-        ):
-            comments = Comment.objects.filter(book_id=book_id)
+        if request.user.is_authenticated:
+            user_comments = Comment.objects.filter(book_id=book_id, user=request.user)
+            comments = comments | user_comments
+            if request.user.userprofile.is_admin:
+                comments = Comment.objects.filter(book_id=book_id)
+            elif request.user.userprofile.is_moderator:
+                if book.category.moderators.filter(id=request.user.id).exists():
+                    comments = Comment.objects.filter(book_id=book_id)
 
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data)
@@ -81,7 +87,7 @@ def product_comments(request, book_id):
                 {"error": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED
             )
 
-        book = Book.objects.get(id=book_id)
+        book = get_object_or_404(Book, id=book_id)
         serializer = CommentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user, book=book)
@@ -92,46 +98,58 @@ def product_comments(request, book_id):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def approve_comment(request, comment_id):
-    if not (request.user.userprofile.is_moderator or request.user.userprofile.is_admin):
+    if not (request.user.userprofile.is_admin or request.user.userprofile.is_moderator):
         return Response({"error": "Forbidden"}, status=403)
 
-    try:
-        comment = Comment.objects.get(id=comment_id)
-    except Comment.DoesNotExist:
-        return Response({"error": "Comment not found"}, status=404)
+    comment = get_object_or_404(Comment, id=comment_id)
+    book_category = comment.book.category
 
-    comment.approved = True
-    comment.save()
+    if request.user.userprofile.is_admin:
+        comment.approved = True
+        comment.save()
+    elif request.user.userprofile.is_moderator:
+        if not book_category.moderators.filter(id=request.user.id).exists():
+            return Response({"error": "Forbidden"}, status=403)
+
+        comment.approved = True
+        comment.save()
+    else:
+        return Response({"error": "Forbidden"}, status=403)
 
     Event.objects.create(
         user=comment.user,
         action="COMMENT_APPROVED",
         description=f"Your comment on '{comment.book.title}' has been approved.",
     )
-
     return Response({"success": "Comment approved"})
 
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def reject_comment(request, comment_id):
-    if not (request.user.userprofile.is_moderator or request.user.userprofile.is_admin):
+    if not (request.user.userprofile.is_admin or request.user.userprofile.is_moderator):
         return Response({"error": "Forbidden"}, status=403)
 
-    try:
-        comment = Comment.objects.get(id=comment_id)
-    except Comment.DoesNotExist:
-        return Response({"error": "Comment not found"}, status=404)
+    comment = get_object_or_404(Comment, id=comment_id)
+    book_category = comment.book.category
 
-    comment.approved = False
-    comment.save()
+    if request.user.userprofile.is_admin:
+        comment.approved = False
+        comment.save()
+    elif request.user.userprofile.is_moderator:
+        if not book_category.moderators.filter(id=request.user.id).exists():
+            return Response({"error": "Forbidden"}, status=403)
+
+        comment.approved = False
+        comment.save()
+    else:
+        return Response({"error": "Forbidden"}, status=403)
 
     Event.objects.create(
         user=comment.user,
         action="COMMENT_REJECTED",
         description=f"Your comment on '{comment.book.title}' has been rejected.",
     )
-
     return Response({"success": "Comment rejected"})
 
 
@@ -168,6 +186,7 @@ class UserProfileView(APIView):
         user = request.user
         return Response(
             {
+                "id": user.id,
                 "username": user.username,
                 "is_admin": user.userprofile.is_admin,
                 "is_moderator": user.userprofile.is_moderator,

@@ -80,7 +80,7 @@ const HomePage: React.FC = () => {
               <img
                 src={book.image}
                 alt={book.title}
-                className="w-full h-80 object-contain"
+                className="w-full h-60 object-contain"
               />
               <div className="p-4">
                 <h3 className="text-lg font-bold accent-text">{book.title}</h3>
