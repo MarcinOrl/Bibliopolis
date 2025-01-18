@@ -4,7 +4,7 @@ from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.decorators import api_view, permission_classes
 from django.contrib.auth.decorators import login_required
 from rest_framework.permissions import IsAuthenticated
@@ -40,6 +40,32 @@ class BookDetailAPIView(APIView):
             book = Book.objects.get(pk=pk)
         except Book.DoesNotExist:
             raise NotFound("Book not found")
+
+        serializer = BookSerializer(book, context={"request": request})
+        return Response(serializer.data)
+
+    def put(self, request, pk):
+        try:
+            book = Book.objects.get(pk=pk)
+        except Book.DoesNotExist:
+            raise NotFound("Book not found")
+
+        user = request.user
+        if not (
+            user.userprofile.is_admin
+            or (
+                user.userprofile.is_moderator
+                and book.category.moderators.filter(id=user.id).exists()
+            )
+        ):
+            raise PermissionDenied("You do not have permission to edit this book.")
+
+        description = request.data.get("description")
+        if not description:
+            return Response({"error": "Description is required."}, status=400)
+
+        book.description = description
+        book.save()
 
         serializer = BookSerializer(book, context={"request": request})
         return Response(serializer.data)

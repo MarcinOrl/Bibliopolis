@@ -39,6 +39,7 @@ const BookPage = () => {
   const [newComment, setNewComment] = useState<string>('');
   const { isAuthenticated, userData } = useUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editDescription, setEditDescription] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -88,7 +89,18 @@ const BookPage = () => {
       console.error('Error rejecting comment:', error);
     }
   };
-  
+
+  const handleSaveDescription = async () => {
+    if (editDescription) {
+      try {
+        const response = await apiClient.put(`/books/${id}/`, { description: editDescription });
+        setBook(response.data);
+        setEditDescription(null);
+      } catch (error) {
+        console.error('Error saving description:', error);
+      }
+    }
+  };
 
   const addToCart = () => {
     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
@@ -139,7 +151,24 @@ const BookPage = () => {
           <div className="flex-grow">
             <h1 className="text-3xl font-bold mb-4">{book.title}</h1>
             <p className="text-lg accent-text mb-2">Author: <span className="font-semibold">{book.author}</span></p>
-            <p className="accent-text text-base mb-6">{book.description}</p>
+            <p className="accent-text text-base mb-6" dangerouslySetInnerHTML={{ __html: book.description }} />
+            {userData?.is_admin || (userData?.is_moderator && book.category?.moderators?.includes(userData.id)) ? (
+              <div className="mb-6">
+                <h2 className="text-xl font-semibold mb-2">Edit description</h2>
+                <textarea
+                  value={editDescription ?? book.description}
+                  onChange={(e) => setEditDescription(e.target.value)}
+                  className="w-full p-2 border rounded-lg mb-4 secondary-color accent-text"
+                  rows={4}
+                />
+                <button
+                  onClick={handleSaveDescription}
+                  className="mt-2 bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 transition"
+                >
+                  Save Description
+                </button>
+              </div>
+            ) : null}
             <p className="text-2xl font-bold text-green-700 mb-6">{book.price} PLN</p>
             <button onClick={addToCart} className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 transition">
               Add to cart

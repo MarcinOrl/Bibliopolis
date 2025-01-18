@@ -28,7 +28,16 @@ class BookSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Book
-        fields = ["id", "title", "author", "description", "price", "image", "category"]
+        fields = [
+            "id",
+            "title",
+            "author",
+            "description",
+            "price",
+            "image",
+            "category",
+            "approved",
+        ]
 
     def get_image(self, obj):
         request = self.context.get("request")

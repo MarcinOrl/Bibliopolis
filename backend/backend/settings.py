@@ -31,7 +31,6 @@ INSTALLED_APPS = [
     "books",
     "rest_framework_simplejwt",
     "corsheaders",
-    "ckeditor",
 ]
 
 MIDDLEWARE = [
