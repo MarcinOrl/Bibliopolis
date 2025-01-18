@@ -69,15 +69,6 @@ class Event(models.Model):
         return f"{self.user.username} - {self.action}"
 
 
-# class EventLog(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
-#     message = models.TextField()
-#     created_at = models.DateTimeField(auto_now_add=True)
-
-#     def __str__(self):
-#         return f"Zdarzenie: {self.message} ({self.created_at})"
-
-
 class Theme(models.Model):
     name = models.CharField(max_length=100)
     primary_color = models.CharField(max_length=7, default="#3498db")  # niebieski
@@ -114,7 +105,9 @@ class GalleryImage(models.Model):
 
 
 class Slider(models.Model):
+    title = models.CharField(max_length=255)
     images = models.ManyToManyField(GalleryImage, related_name="sliders", blank=True)
+    is_default = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title

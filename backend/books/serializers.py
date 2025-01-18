@@ -80,7 +80,7 @@ class SliderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Slider
-        fields = ["id", "images"]
+        fields = ["id", "title", "images", "is_default"]
 
 
 class OrderItemSerializer(serializers.ModelSerializer):

@@ -473,6 +473,17 @@ def add_image_to_slider(request, slider_id):
     return Response({"message": "Image added to slider"}, status=status.HTTP_200_OK)
 
 
+@api_view(["PUT"])
+def set_default_slider(request, slider_id):
+    slider = get_object_or_404(Slider, id=slider_id)
+    Slider.objects.update(
+        is_default=False
+    )  # Resetujemy wszystkie slidera do is_default=False
+    slider.is_default = True
+    slider.save()
+    return Response({"status": "Slider set as default"})
+
+
 class CreateOrderView(APIView):
     permission_classes = [IsAuthenticated]
 

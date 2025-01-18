@@ -13,6 +13,7 @@ const SliderOrderForm = () => {
   const [currentSliderImages, setCurrentSliderImages] = useState<any[]>([]);
   const [message, setMessage] = useState<string | null>(null);
   const [messageType, setMessageType] = useState<'success' | 'error' | null>(null);
+  const [sliderTitle, setSliderTitle] = useState<string>(''); // Stan dla tytułu slajdera
   const router = useRouter();
 
   useEffect(() => {
@@ -47,11 +48,18 @@ const SliderOrderForm = () => {
   };
 
   const handleCreateSlider = async () => {
+    if (!sliderTitle) {
+      setMessage('Please enter a title for the slider.');
+      setMessageType('error');
+      return;
+    }
+    
     try {
-      const response = await apiClient.post('/sliders/', {});
+      const response = await apiClient.post('/sliders/', { title: sliderTitle }); // Przesyłanie tytułu
       setSliders((prevSliders) => [...prevSliders, response.data]);
       setMessage('The slider has been created.');
       setMessageType('success');
+      setSliderTitle(''); // Reset tytułu po utworzeniu slajdera
     } catch (error) {
       console.error('Error creating the slider.', error);
       setMessage('Error creating the slider.');
@@ -135,6 +143,13 @@ const SliderOrderForm = () => {
 
       {/* Przycisk do tworzenia nowego slajdera */}
       <div className="text-center mb-6">
+        <input
+          type="text"
+          value={sliderTitle}
+          onChange={(e) => setSliderTitle(e.target.value)}
+          placeholder="Enter slider title"
+          className="px-4 py-2 mx-2 border rounded-lg mb-4 secondary-color accent-text"
+        />
         <button
           onClick={handleCreateSlider}
           className="bg-blue-500 px-6 py-3 text-white rounded-lg shadow-md hover:bg-blue-600 transition-all"

@@ -20,7 +20,12 @@ const SliderComponent: React.FC = () => {
         const response = await apiClient.get('/sliders/');
         setSliders(response.data);
         if (response.data.length > 0) {
-          setCurrentSlider(0);
+          const defaultSliderIndex = response.data.findIndex((slider: any) => slider.is_default);
+          if (defaultSliderIndex !== -1) {
+            setCurrentSlider(defaultSliderIndex);
+          } else {
+            setCurrentSlider(0);
+          }
         }
       } catch (error) {
         console.error('Error fetching sliders:', error);
@@ -45,26 +50,45 @@ const SliderComponent: React.FC = () => {
       fetchSliderImages();
     }
   }, [sliders, currentSlider]);
-  
+
+  const handleSliderSelect = async (index: number) => {
+    setCurrentSlider(index);
+
+    try {
+      const selectedSlider = sliders[index];
+      if (!selectedSlider) return;
+
+      await apiClient.put(`/sliders/${selectedSlider.id}/set_default/`);
+
+      setSliders(prevSliders =>
+        prevSliders.map(slider =>
+          slider.id === selectedSlider.id
+            ? { ...slider, is_default: true }
+            : { ...slider, is_default: false }
+        )
+      );
+    } catch (error) {
+      console.error('Error setting default slider:', error);
+    }
+  };
+
+  const setEqualHeight = () => {
+    let maxHeight = 0;
+    const cards = document.querySelectorAll('.card');
+    cards.forEach((card) => {
+      const cardHeight = card.clientHeight;
+      if (cardHeight > maxHeight) {
+        maxHeight = cardHeight;
+      }
+    });
+
+    cards.forEach((card) => {
+      (card as HTMLElement).style.height = `${maxHeight}px`;
+    });
+  };
+
   useEffect(() => {
-    const setEqualHeight = () => {
-      let maxHeight = 0;
-      const cards = document.querySelectorAll('.card');
-      cards.forEach((card) => {
-        const cardHeight = card.clientHeight;
-        if (cardHeight > maxHeight) {
-          maxHeight = cardHeight;
-        }
-      });
-
-      cards.forEach((card) => {
-        (card as HTMLElement).style.height = `${maxHeight}px`;
-      });
-    };
-
     setEqualHeight();
-    window.addEventListener('resize', setEqualHeight);
-    return () => window.removeEventListener('resize', setEqualHeight);
   }, [images, currentSlider]);
 
   const settings = {
@@ -98,31 +122,32 @@ const SliderComponent: React.FC = () => {
   return (
     <div className="slider-container py-10">
       {userData?.is_admin && (
-        <div className="mb-4 text-center flex justify-center gap-4">
-          <Link href="/add_image">
-            <button className="bg-blue-500 px-6 py-3 text-white rounded-lg shadow-md hover:bg-blue-600 transition-all">
-              Add Image
-            </button>
-          </Link>
-          <Link href="/slider_edit">
-            <button className="bg-blue-500 px-6 py-3 text-white rounded-lg shadow-md hover:bg-blue-600 transition-all">
-              Manage Sliders
-            </button>
-          </Link>
+        <div>
+          <div className="mb-4 text-center flex justify-center gap-4">
+            <Link href="/add_image">
+              <button className="bg-blue-500 px-6 py-3 text-white rounded-lg shadow-md hover:bg-blue-600 transition-all">
+                Add Image
+              </button>
+            </Link>
+            <Link href="/slider_edit">
+              <button className="bg-blue-500 px-6 py-3 text-white rounded-lg shadow-md hover:bg-blue-600 transition-all">
+                Manage Sliders
+              </button>
+            </Link>
+          </div>
+          <div className="text-center mb-4">
+            {sliders.map((slider: any, index: number) => (
+              <button
+                key={index}
+                onClick={() => handleSliderSelect(index)}
+                className={`border border-green-500  px-4 py-2 mx-2 rounded-lg accent-text primary-color`}
+              >
+                {slider.title}
+              </button>
+            ))}
+          </div>
         </div>
       )}
-
-      <div className="text-center mb-4">
-        {sliders.map((slider: any, index: number) => (
-          <button
-            key={index}
-            onClick={() => setCurrentSlider(index)}
-            className={`border border-green-500  px-4 py-2 mx-2 rounded-lg accent-text primary-color`}
-          >
-            Slider{index + 1}
-          </button>
-        ))}
-      </div>
       <div className="slider-wrapper">
         {images.length === 0 ? (
           <p className="text-center">No images in this slider</p>
