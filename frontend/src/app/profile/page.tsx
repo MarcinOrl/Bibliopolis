@@ -91,6 +91,13 @@ const Profile: React.FC = () => {
                         </li>
                     ))}
                 </ul>
+                <div className="my-8">
+                    <Link href="/create_book">
+                        <button className="bg-blue-500 px-6 py-3 text-white rounded-lg shadow-md hover:bg-blue-600 transition-all">
+                            Create New Book
+                        </button>
+                    </Link>
+                </div>
             </div>
         </div>
     );

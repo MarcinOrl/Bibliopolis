@@ -19,6 +19,7 @@ from .serializers import (
     OrderSerializer,
     CommentSerializer,
     EventSerializer,
+    BookApproveSerializer,
 )
 from .models import (
     Book,
@@ -32,6 +33,36 @@ from .models import (
     Comment,
     Event,
 )
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def create_book(request):
+    if request.method == "POST":
+        serializer = BookSerializer(data=request.data)
+
+        if serializer.is_valid():
+            print("Image received:", request.data.get("image"))
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["PATCH"])
+@permission_classes([IsAuthenticated])
+def approve_book(request, book_id):
+    try:
+        book = Book.objects.get(id=book_id)
+    except Book.DoesNotExist:
+        return Response({"detail": "Book not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = BookApproveSerializer(book, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save(approved=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class BookDetailAPIView(APIView):
@@ -476,9 +507,7 @@ def add_image_to_slider(request, slider_id):
 @api_view(["PUT"])
 def set_default_slider(request, slider_id):
     slider = get_object_or_404(Slider, id=slider_id)
-    Slider.objects.update(
-        is_default=False
-    )  # Resetujemy wszystkie slidera do is_default=False
+    Slider.objects.update(is_default=False)
     slider.is_default = True
     slider.save()
     return Response({"status": "Slider set as default"})

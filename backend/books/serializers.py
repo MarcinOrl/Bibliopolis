@@ -23,8 +23,8 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class BookSerializer(serializers.ModelSerializer):
-    image = serializers.SerializerMethodField()
-    category = CategorySerializer()
+    image = serializers.ImageField(required=False)
+    category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
 
     class Meta:
         model = Book
@@ -36,6 +36,7 @@ class BookSerializer(serializers.ModelSerializer):
             "price",
             "image",
             "category",
+            "created_at",
             "approved",
         ]
 
@@ -44,6 +45,12 @@ class BookSerializer(serializers.ModelSerializer):
         if obj.image:
             return request.build_absolute_uri(obj.image.url)
         return None
+
+
+class BookApproveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Book
+        fields = ["approved"]
 
 
 class CommentSerializer(serializers.ModelSerializer):

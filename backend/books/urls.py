@@ -23,6 +23,8 @@ from .views import (
     approve_comment,
     reject_comment,
     get_user_events,
+    create_book,
+    approve_book,
 )
 
 urlpatterns = [
@@ -30,6 +32,8 @@ urlpatterns = [
     path("profile/", UserProfileView.as_view(), name="user_profile"),
     path("books/", BookListAPIView.as_view(), name="book-list"),
     path("books/<int:pk>/", BookDetailAPIView.as_view(), name="book-detail"),
+    path("books/create/", create_book, name="create_book"),
+    path("books/<int:book_id>/approve/", approve_book, name="approve_book"),
     path("categories/", CategoryListAPIView.as_view(), name="category-list"),
     path("books/<int:book_id>/comments/", product_comments, name="product_comments"),
     path("comments/<int:comment_id>/approve/", approve_comment, name="approve_comment"),
