@@ -48,6 +48,7 @@ const BookPage = () => {
         try {
           const response = await apiClient.get(`/books/${id}/`);
           setBook(response.data);
+          console.log('Book response:', response.data);
         } catch (error) {
           console.error('Error fetching book:', error);
         }
@@ -139,6 +140,8 @@ const BookPage = () => {
   if (!book) {
     return <div>Loading book...</div>;
   }
+  {console.log("Moderators for book:", book.category.id)}
+  {console.log("Current user ID:", userData?.id)}
 
   return (
     <div className="flex justify-center p-6">

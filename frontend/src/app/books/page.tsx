@@ -3,6 +3,13 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import apiClient from '../../utils/api';
+import { useUser } from '../../utils/UserContext';
+
+interface Category {
+  id: number;
+  name: string;
+  moderators: number[];
+}
 
 interface Book {
   id: number;
@@ -11,14 +18,12 @@ interface Book {
   description: string;
   price: string;
   image: string;
-}
-
-interface Category {
-  id: number;
-  name: string;
+  category: Category;
+  approved: boolean;
 }
 
 const BooksPage = () => {
+  const { isAuthenticated, userData } = useUser();
   const [categories, setCategories] = useState<Category[]>([]);
   const [books, setBooks] = useState<Book[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
@@ -46,12 +51,35 @@ const BooksPage = () => {
           : `/books/?category=${selectedCategory}`;
         const response = await apiClient.get(endpoint);
         setBooks(response.data);
+        console.log('Categories response:', response.data);
       } catch (error) {
         console.error('Error fetching books:', error);
       }
     };
     fetchBooks();
   }, [selectedCategory]);
+
+  const handleApproveBook = async (bookId: number) => {
+    try {
+      const response = await apiClient.patch(`/books/${bookId}/approve/`);
+      setBooks(books.map(book =>
+        book.id === bookId ? { ...book, approved: true } : book
+      ));
+    } catch (error) {
+      console.error('Error approving book:', error);
+    }
+  };
+  
+  const handleRejectBook = async (bookId: number) => {
+    try {
+      const response = await apiClient.patch(`/books/${bookId}/reject/`);
+      setBooks(books.map(book =>
+        book.id === bookId ? { ...book, approved: false } : book
+      ));
+    } catch (error) {
+      console.error('Error rejecting book:', error);
+    }
+  };
 
   const addToCart = (book: Book) => {
     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
@@ -66,7 +94,6 @@ const BooksPage = () => {
 
     localStorage.setItem('cart', JSON.stringify(cart));
 
-    // Otwórz modal po dodaniu książki do koszyka
     setBookToAdd(book);
     setIsModalOpen(true);
   };
@@ -113,33 +140,60 @@ const BooksPage = () => {
           {selectedCategory ? 'Books from the selected category' : 'All books'}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {books.map((book) => (
-            <div
-              key={book.id}
-              className="primary-light rounded-lg shadow-lg hover:shadow-xl transition-all overflow-hidden cursor-pointer"
-              onClick={() => router.push(`/books/${book.id}`)}
-            >
-              <img
-                src={book.image}
-                alt={book.title}
-                className="w-full h-80 object-contain primary-light"
-              />
-              <div className="p-4">
-                <h3 className="text-lg font-bold">{book.title}</h3>
-                <p className="text-sm">Author: {book.author}</p>
-                <p className="text-xl font-bold mt-4">{book.price} PLN</p>
+        {books.map((book) => (
+          <div
+            key={book.id}
+            className="primary-light rounded-lg shadow-lg hover:shadow-xl transition-all overflow-hidden cursor-pointer"
+            onClick={() => router.push(`/books/${book.id}`)}
+          >
+            <img
+              src={book.image}
+              alt={book.title}
+              className="w-full h-80 object-contain primary-light"
+            />
+            <div className="p-4">
+              <h3 className="text-lg font-bold">{book.title}</h3>
+              <p className="text-sm">Author: {book.author}</p>
+              <p className="text-xl font-bold mt-4">{book.price} PLN</p>
+              <div className="flex items-center justify-between mt-4">
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     addToCart(book);
                   }}
-                  className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 transition mt-4"
+                  className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 transition"
                 >
                   Add to Cart
                 </button>
+                {console.log("Moderators for book:", book.category?.moderators)}
+                {console.log("Current user ID:", userData?.id)}
+                {(userData?.is_admin || 
+                  (userData?.is_moderator && book.category?.moderators?.includes(userData.id))) && (
+                  <div className="flex gap-2">
+                    {book.approved === null && (
+                      <>
+                        <button
+                          onClick={(e) => {e.stopPropagation(); handleApproveBook(book.id)}}
+                          className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                        >
+                          Approve
+                        </button>
+                        <button
+                          onClick={(e) =>{e.stopPropagation(); handleRejectBook(book.id)}}
+                          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                        >
+                          Reject
+                        </button>
+                      </>
+                    )}
+                    {book.approved && <span className="text-green-500">Approved</span>}
+                    {book.approved === false && <span className="text-red-500">Rejected</span>}
+                  </div>
+                )}
               </div>
             </div>
-          ))}
+          </div>
+        ))}
         </div>
       </main>
 

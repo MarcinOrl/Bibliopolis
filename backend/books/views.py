@@ -19,7 +19,6 @@ from .serializers import (
     OrderSerializer,
     CommentSerializer,
     EventSerializer,
-    BookApproveSerializer,
 )
 from .models import (
     Book,
@@ -43,7 +42,7 @@ def create_book(request):
 
         if serializer.is_valid():
             print("Image received:", request.data.get("image"))
-            serializer.save()
+            serializer.save(user=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -57,12 +56,48 @@ def approve_book(request, book_id):
     except Book.DoesNotExist:
         return Response({"detail": "Book not found."}, status=status.HTTP_404_NOT_FOUND)
 
-    serializer = BookApproveSerializer(book, data=request.data, partial=True)
-    if serializer.is_valid():
-        serializer.save(approved=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    if not (request.user.userprofile.is_admin or request.user.userprofile.is_moderator):
+        return Response({"error": "Forbidden"}, status=403)
 
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    if request.user.userprofile.is_moderator:
+        if not book.category.moderators.filter(id=request.user.id).exists():
+            return Response({"error": "Forbidden"}, status=403)
+
+    book.approved = True
+    book.save()
+
+    Event.objects.create(
+        user=book.user,
+        action="BOOK_APPROVED",
+        description=f"Your book '{book.title}' has been approved.",
+    )
+    return Response({"success": "Book approved"}, status=200)
+
+
+@api_view(["PATCH"])
+@permission_classes([IsAuthenticated])
+def reject_book(request, book_id):
+    try:
+        book = Book.objects.get(id=book_id)
+    except Book.DoesNotExist:
+        return Response({"detail": "Book not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    if not (request.user.userprofile.is_admin or request.user.userprofile.is_moderator):
+        return Response({"error": "Forbidden"}, status=403)
+
+    if request.user.userprofile.is_moderator:
+        if not book.category.moderators.filter(id=request.user.id).exists():
+            return Response({"error": "Forbidden"}, status=403)
+
+    book.approved = False
+    book.save()
+
+    Event.objects.create(
+        user=book.user,
+        action="BOOK_REJECTED",
+        description=f"Your book '{book.title}' has been rejected.",
+    )
+    return Response({"success": "Book rejected"}, status=200)
 
 
 class BookDetailAPIView(APIView):
@@ -105,10 +140,35 @@ class BookDetailAPIView(APIView):
 class BookListAPIView(APIView):
     def get(self, request):
         category_id = request.query_params.get("category")
+
         if category_id:
-            books = Book.objects.filter(category_id=category_id)
+            books = Book.objects.filter(category_id=category_id, approved=True)
+            if request.user.is_authenticated:
+                user_books = Book.objects.filter(
+                    category_id=category_id, user=request.user
+                )
+                books = books | user_books
+                if request.user.userprofile.is_admin:
+                    books = Book.objects.filter(category_id=category_id)
+                elif request.user.userprofile.is_moderator:
+                    if Category.objects.filter(
+                        id=category_id, moderators=request.user.id
+                    ).exists():
+                        books = Book.objects.filter(category_id=category_id)
+
         else:
-            books = Book.objects.all()
+            books = Book.objects.filter(approved=True)
+            if request.user.is_authenticated:
+                user_books = Book.objects.filter(user=request.user)
+                books = books | user_books
+                if request.user.userprofile.is_admin:
+                    books = Book.objects.all()
+                elif request.user.userprofile.is_moderator:
+                    mod_categories = Category.objects.filter(
+                        moderators=request.user.id
+                    ).values_list("id", flat=True)
+                    books = Book.objects.filter(category_id__in=mod_categories)
+
         serializer = BookSerializer(books, many=True, context={"request": request})
         return Response(serializer.data)
 

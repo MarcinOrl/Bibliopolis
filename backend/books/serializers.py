@@ -24,12 +24,13 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class BookSerializer(serializers.ModelSerializer):
     image = serializers.ImageField(required=False)
-    category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
+    category = CategorySerializer()
 
     class Meta:
         model = Book
         fields = [
             "id",
+            "user",
             "title",
             "author",
             "description",
