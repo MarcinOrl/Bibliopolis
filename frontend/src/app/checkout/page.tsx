@@ -5,6 +5,20 @@ import { useRouter } from "next/navigation";
 import { useUser } from "../../utils/UserContext";
 import apiClient from "../../utils/api";
 
+interface Book {
+  id: number;
+  title: string;
+  author: string;
+  description: string;
+  price: string;
+  image: string;
+}
+
+interface CartItem {
+  book: Book;
+  quantity: number;
+}
+
 const Checkout = () => {
   const { userData, isAuthenticated } = useUser();
   const [shippingAddress, setShippingAddress] = useState("");
@@ -39,7 +53,7 @@ const Checkout = () => {
       return;
     }
     const cartData = JSON.parse(localStorage.getItem('cart') || '[]');
-    const orderItems = cartData.map((item: any) => ({
+    const orderItems = cartData.map((item: CartItem) => ({
       book: item.book.id,
       quantity: item.quantity,
     }));

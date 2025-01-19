@@ -3,13 +3,11 @@
 import { useState } from 'react';
 import apiClient from '../../utils/api';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,7 +60,7 @@ const Login = () => {
   
       {/* Prawa strona - link do rejestracji */}
       <div className="w-full md:w-1/2 p-8 secondary-color accent-text flex flex-col justify-center items-center rounded-lg shadow-lg">
-        <h2 className="text-xl font-semibold mb-4 text-center">Don't have an account?</h2>
+        <h2 className="text-xl font-semibold mb-4 text-center">Don&apos;t have an account?</h2>
         <p className="mb-6 text-center">
           Create an account to use our platform.
         </p>

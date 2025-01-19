@@ -34,9 +34,8 @@ const HomePage: React.FC = () => {
 
     apiClient.get('/events/')
       .then(response => setEvents(response.data))
-      .catch(error => {
-        // console.error(error);
-        // To suppress this error, you can comment out the line above
+      .catch(() => {
+        // pass
       });
   }, []);
 

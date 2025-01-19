@@ -71,7 +71,7 @@ const BookPage = () => {
 
   const handleApproveComment = async (commentId: number) => {
     try {
-      const response = await apiClient.post(`/comments/${commentId}/approve/`);
+      await apiClient.post(`/comments/${commentId}/approve/`);
       setComments(comments.map(comment =>
         comment.id === commentId ? { ...comment, approved: true } : comment
       ));
@@ -82,7 +82,7 @@ const BookPage = () => {
 
   const handleRejectComment = async (commentId: number) => {
     try {
-      const response = await apiClient.post(`/comments/${commentId}/reject/`);
+      await apiClient.post(`/comments/${commentId}/reject/`);
       setComments(comments.map(comment =>
         comment.id === commentId ? { ...comment, approved: false } : comment
       ));

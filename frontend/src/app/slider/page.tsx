@@ -8,10 +8,24 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { useUser } from '../../utils/UserContext';
 
+interface GalleryImage {
+  id: number;
+  title: string;
+  description: string;
+  image: string;
+}
+
+interface SliderModel {
+  id: number;
+  title: string;
+  is_default: boolean;
+  images: GalleryImage[];
+}
+
 const SliderComponent: React.FC = () => {
-  const [images, setImages] = useState<any[]>([]);
+  const [images, setImages] = useState<GalleryImage[]>([]);
   const [currentSlider, setCurrentSlider] = useState(0);
-  const [sliders, setSliders] = useState<any[]>([]);
+  const [sliders, setSliders] = useState<SliderModel[]>([]);
   const { userData } = useUser();
 
   useEffect(() => {
@@ -20,7 +34,7 @@ const SliderComponent: React.FC = () => {
         const response = await apiClient.get('/sliders/');
         setSliders(response.data);
         if (response.data.length > 0) {
-          const defaultSliderIndex = response.data.findIndex((slider: any) => slider.is_default);
+          const defaultSliderIndex = response.data.findIndex((slider: SliderModel) => slider.is_default);
           if (defaultSliderIndex !== -1) {
             setCurrentSlider(defaultSliderIndex);
           } else {
@@ -136,7 +150,7 @@ const SliderComponent: React.FC = () => {
             </Link>
           </div>
           <div className="text-center mb-4">
-            {sliders.map((slider: any, index: number) => (
+            {sliders.map((slider: SliderModel, index: number) => (
               <button
                 key={index}
                 onClick={() => handleSliderSelect(index)}
@@ -153,7 +167,7 @@ const SliderComponent: React.FC = () => {
           <p className="text-center">No images in this slider</p>
         ) : (
           <Slider {...settings}>
-            {images.map((image: any) => (
+            {images.map((image: GalleryImage) => (
               <div key={image.id} className="card shadow-lg">
                 <img
                   src={image.image}

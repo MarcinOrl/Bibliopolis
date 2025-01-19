@@ -1,8 +1,22 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import apiClient from "./api";
 
+interface User {
+  id: number;
+  username: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  address: string;
+  city: string;
+  postal_code: string;
+  phone_number: string;
+  is_admin: boolean;
+  is_moderator: boolean;
+}
+
 interface UserContextProps {
-  userData: any;
+  userData: User | null;
   isAuthenticated: boolean;
 }
 
@@ -17,7 +31,7 @@ export const useUser = () => {
 };
 
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [userData, setUserData] = useState<any>(null);
+  const [userData, setUserData] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   useEffect(() => {

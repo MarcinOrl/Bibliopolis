@@ -5,12 +5,26 @@ import { useUser } from "../../utils/UserContext";
 import apiClient from "../../utils/api";
 import { useRouter } from 'next/navigation';
 
+interface GalleryImage {
+  id: number;
+  title: string;
+  description: string;
+  image: string;
+}
+
+interface SliderModel {
+  id: number;
+  title: string;
+  is_default: boolean;
+  images: GalleryImage[];
+}
+
 const SliderOrderForm = () => {
   const { userData, isAuthenticated } = useUser();
-  const [images, setImages] = useState<any[]>([]);
-  const [sliders, setSliders] = useState<any[]>([]);
+  const [images, setImages] = useState<GalleryImage[]>([]);
+  const [sliders, setSliders] = useState<SliderModel[]>([]);
   const [currentSlider, setCurrentSlider] = useState<number | null>(null);
-  const [currentSliderImages, setCurrentSliderImages] = useState<any[]>([]);
+  const [currentSliderImages, setCurrentSliderImages] = useState<GalleryImage[]>([]);
   const [message, setMessage] = useState<string | null>(null);
   const [messageType, setMessageType] = useState<'success' | 'error' | null>(null);
   const [sliderTitle, setSliderTitle] = useState<string>(''); // Stan dla tytułu slajdera
@@ -129,7 +143,7 @@ const SliderOrderForm = () => {
   };  
 
   const isImageAddedToSlider = (imageId: number) => {
-    return currentSliderImages.some((image: any) => image.id === imageId);
+    return currentSliderImages.some((image: GalleryImage) => image.id === imageId);
   };
 
   return (

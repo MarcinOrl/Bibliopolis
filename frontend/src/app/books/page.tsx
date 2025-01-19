@@ -61,7 +61,7 @@ const BooksPage = () => {
 
   const handleApproveBook = async (bookId: number) => {
     try {
-      const response = await apiClient.patch(`/books/${bookId}/approve/`);
+      await apiClient.patch(`/books/${bookId}/approve/`);
       setBooks(books.map(book =>
         book.id === bookId ? { ...book, approved: true } : book
       ));
@@ -72,7 +72,7 @@ const BooksPage = () => {
   
   const handleRejectBook = async (bookId: number) => {
     try {
-      const response = await apiClient.patch(`/books/${bookId}/reject/`);
+      await apiClient.patch(`/books/${bookId}/reject/`);
       setBooks(books.map(book =>
         book.id === bookId ? { ...book, approved: false } : book
       ));
@@ -165,8 +165,6 @@ const BooksPage = () => {
                 >
                   Add to Cart
                 </button>
-                {console.log("Moderators for book:", book.category?.moderators)}
-                {console.log("Current user ID:", userData?.id)}
                 {(userData?.is_admin || 
                   (userData?.is_moderator && book.category?.moderators?.includes(userData.id))) && (
                   <div className="flex gap-2">

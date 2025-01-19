@@ -167,7 +167,8 @@ class BookListAPIView(APIView):
                     mod_categories = Category.objects.filter(
                         moderators=request.user.id
                     ).values_list("id", flat=True)
-                    books = Book.objects.filter(category_id__in=mod_categories)
+                    mod_books = Book.objects.filter(category_id__in=mod_categories)
+                    books = books | mod_books
 
         serializer = BookSerializer(books, many=True, context={"request": request})
         return Response(serializer.data)

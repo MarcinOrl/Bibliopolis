@@ -38,13 +38,13 @@ const Cart = () => {
         const booksData = response.data;
 
         const updatedCart = cartData.map((item: CartItem) => {
-          const book = booksData.find((b: any) => b.id === item.book.id);
+          const book = booksData.find((b: Book) => b.id === item.book.id);
           return { ...item, book };
         });
         setCart(updatedCart);
 
         let price = 0;
-        updatedCart.forEach((item: any) => {
+        updatedCart.forEach((item: CartItem) => {
           price += item.quantity * parseFloat(item.book.price);
         });
 
@@ -67,7 +67,7 @@ const Cart = () => {
     localStorage.setItem("cart", JSON.stringify(updatedCart));
 
     let price = 0;
-    updatedCart.forEach((item: any) => {
+    updatedCart.forEach((item: CartItem) => {
       price += item.quantity * parseFloat(item.book.price);
     });
 
@@ -81,7 +81,7 @@ const Cart = () => {
     localStorage.setItem("cart", JSON.stringify(updatedCart));
 
     let price = 0;
-    updatedCart.forEach((item: any) => {
+    updatedCart.forEach((item: CartItem) => {
       price += item.quantity * parseFloat(item.book.price);
     });
 
