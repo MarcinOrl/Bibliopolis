@@ -48,12 +48,6 @@ class BookSerializer(serializers.ModelSerializer):
         return None
 
 
-class BookApproveSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Book
-        fields = ["approved"]
-
-
 class CommentSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source="user.username", read_only=True)
 

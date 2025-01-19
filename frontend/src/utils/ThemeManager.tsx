@@ -33,7 +33,9 @@ const ThemeManager = () => {
               const { primary_color, secondary_color, accent_color } = response.data;
               applyColors(primary_color, secondary_color, accent_color);
             })
-            .catch(error => console.error("Błąd ładowania domyślnego motywu:", error));
+            .catch(error => {
+              // console.error("Error loading default theme:", error);
+            });
         });
   }, []);
 

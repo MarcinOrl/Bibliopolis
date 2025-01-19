@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useUser } from "../../utils/UserContext";
 import apiClient from "../../utils/api";
 
 interface Book {
@@ -20,7 +21,10 @@ interface CartItem {
 
 const Cart = () => {
   const [cart, setCart] = useState<CartItem[]>([]);
+  const { isAuthenticated } = useUser();
   const [totalPrice, setTotalPrice] = useState(0);
+  const [message, setMessage] = useState<string | null>(null);
+  const [messageType, setMessageType] = useState<'success' | 'error' | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -85,6 +89,17 @@ const Cart = () => {
   };
 
   const handleSubmitOrder = () => {
+    if (cart.length === 0) {
+      setMessage("Your cart is empty. Please add some items before proceeding.");
+      setMessageType("error");
+      return;
+    }
+  
+    if (!isAuthenticated) {
+      router.push("/login");
+      return;
+    }
+  
     router.push("/checkout");
   };
 
@@ -144,6 +159,10 @@ const Cart = () => {
 
         {/* Przycisk składania zamówienia */}
         <div className="mt-8 text-center">
+          {/* Komunikat o błędzie */}
+          {message && messageType === "error" && (
+            <div className="text-white bg-red-500 text-lg text-center rounded-lg mb-4">{message}</div>
+          )}
           <button
             onClick={handleSubmitOrder}
             className="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 transition"

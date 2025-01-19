@@ -23,7 +23,7 @@ interface Book {
 }
 
 const BooksPage = () => {
-  const { isAuthenticated, userData } = useUser();
+  const { userData } = useUser();
   const [categories, setCategories] = useState<Category[]>([]);
   const [books, setBooks] = useState<Book[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);

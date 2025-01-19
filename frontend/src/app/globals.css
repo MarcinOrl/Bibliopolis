@@ -21,10 +21,6 @@
   }
 }
 
-.accent-text {
-  color: var(--accent-color);
-}
-
 .primary-color {
   background-color: var(--primary-color);
 }
@@ -33,12 +29,24 @@
   background-color: var(--secondary-color);
 }
 
+.accent-text {
+  color: var(--accent-color);
+}
+
 .primary-light {
   background-color: var(--primary-light)
 }
 
 .secondary-dark {
   background-color: var(--secondary-dark);
+}
+
+.accent-light {
+  color: var(--accent-light);
+}
+
+input::placeholder {
+  color: var(--accent-text);
 }
 
 body {

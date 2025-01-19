@@ -81,7 +81,7 @@ const OrdersPage: React.FC = () => {
       <h1 className="text-xl py-4 font-semibold">Orders</h1>
       <div className="space-y-4">
         {orders.map(order => (
-          <div key={order.id} className="p-4 rounded flex justify-between items-center primary-light accent-text shadow-lg">
+          <div key={order.id} className="p-4 rounded-lg flex justify-between items-center primary-light accent-text shadow-lg">
             <div>
               <p>Order ID: {order.id}</p>
               <p>User: {order.username}</p>

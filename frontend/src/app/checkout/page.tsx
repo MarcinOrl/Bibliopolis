@@ -14,6 +14,8 @@ const Checkout = () => {
   const [city, setCity] = useState("");
   const [postalCode, setPostalCode] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [message, setMessage] = useState<string | null>(null);
+  const [messageType, setMessageType] = useState<'success' | 'error' | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -31,6 +33,11 @@ const Checkout = () => {
   }, [isAuthenticated, userData, router]);
 
   const handleOrderSubmit = async () => {
+    if (!firstName || !lastName || !email || !shippingAddress || !city || !postalCode || !phoneNumber) {
+      setMessage("Please fill in all the required fields.");
+      setMessageType("error");
+      return;
+    }
     const cartData = JSON.parse(localStorage.getItem('cart') || '[]');
     const orderItems = cartData.map((item: any) => ({
       book: item.book.id,
@@ -58,6 +65,8 @@ const Checkout = () => {
       router.push('/orders');
     } catch (error) {
       console.error('Error placing the order:', error);
+      setMessage("An error occurred while placing the order.");
+      setMessageType("error");
     }
   };
 
@@ -67,6 +76,12 @@ const Checkout = () => {
     <div className="flex justify-center items-center min-h-screen p-6">
       <div className="max-w-lg w-full secondary-color rounded-lg shadow-lg p-8">
         <h1 className="text-3xl font-bold text-center mb-6 accent-color">Checkout</h1>
+
+        {message && (
+          <div className={`text-center p-2 ${messageType === 'success' ? 'bg-green-500' : 'bg-red-500'} text-white text-lg rounded-lg mb-4`}>
+            {message}
+          </div>
+        )}
 
         <div className="mb-6">
           <label htmlFor="firstName" className="block text-lg font-semibold accent-color mb-2">

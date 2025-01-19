@@ -318,6 +318,97 @@ class UserProfileView(APIView):
         )
 
 
+@api_view(["PUT"])
+@permission_classes([IsAuthenticated])
+def update_user_profile(request):
+    if request.method == "PUT":
+        user = request.user
+
+        first_name = request.data.get("first_name")
+        last_name = request.data.get("last_name")
+        email = request.data.get("email")
+        address = request.data.get("address")
+        city = request.data.get("city")
+        postal_code = request.data.get("postal_code")
+        phone_number = request.data.get("phone_number")
+        print(request.data)
+
+        if first_name:
+            user.first_name = first_name
+        if last_name:
+            user.last_name = last_name
+        if email:
+            user.email = email
+        if address:
+            user.userprofile.address = address
+        if city:
+            user.userprofile.city = city
+        if postal_code:
+            user.userprofile.postal_code = postal_code
+        if phone_number:
+            user.userprofile.phone_number = phone_number
+
+        user.save()
+        user.userprofile.save()
+
+        return Response(
+            {"message": "Profile updated successfully."}, status=status.HTTP_200_OK
+        )
+
+
+class ThemeManagementView(APIView):
+    def post(self, request):
+        if not request.user.userprofile.is_admin:
+            return Response({"error": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
+
+        name = request.data.get("name")
+        primary_color = request.data.get("primary_color")
+        secondary_color = request.data.get("secondary_color")
+        accent_color = request.data.get("accent_color")
+
+        if not name or not primary_color or not secondary_color or not accent_color:
+            return Response(
+                {"error": "All fields are required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        theme = Theme.objects.create(
+            name=name,
+            primary_color=primary_color,
+            secondary_color=secondary_color,
+            accent_color=accent_color,
+        )
+        return Response(
+            {"message": "Theme created successfully.", "id": theme.id},
+            status=status.HTTP_201_CREATED,
+        )
+
+    def delete(self, request, theme_id=None):
+        if not request.user.userprofile.is_admin:
+            return Response({"error": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
+
+        if not theme_id:
+            return Response(
+                {"error": "Theme ID is required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            theme = Theme.objects.get(id=theme_id)
+            theme.delete()
+            return Response(
+                {"message": "Theme deleted successfully."}, status=status.HTTP_200_OK
+            )
+        except Theme.DoesNotExist:
+            return Response(
+                {"error": "Theme not found."}, status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception as e:
+            return Response(
+                {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
 class ThemeView(APIView):
     def get(self, request):
         theme = Theme.objects.first()
@@ -579,33 +670,46 @@ class CreateOrderView(APIView):
     def post(self, request):
         user = request.user
         shipping_address = request.data.get("shipping_address")
+        city = request.data.get("city")
+        postal_code = request.data.get("postal_code")
+        phone_number = request.data.get("phone_number")
         items_data = request.data.get("items", [])
 
-        if not shipping_address or not items_data:
+        if (
+            not shipping_address
+            or not city
+            or not postal_code
+            or not phone_number
+            or not items_data
+        ):
             return Response(
-                {"detail": "Adres wysyłki i produkty są wymagane."},
+                {
+                    "detail": "Adres wysyłki, miasto, kod pocztowy, numer telefonu i produkty są wymagane."
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Tworzymy zamówienie
-        order = Order.objects.create(user=user, shipping_address=shipping_address)
+        order = Order.objects.create(
+            user=user,
+            shipping_address=shipping_address,
+            city=city,
+            postal_code=postal_code,
+            phone_number=phone_number,
+        )
 
-        total_price = Decimal("0.00")  # Zmieniamy na Decimal
+        total_price = Decimal("0.00")
 
         for item_data in items_data:
             book_id = item_data.get("book")
             quantity = item_data.get("quantity", 1)
             book = Book.objects.get(id=book_id)
-            item_total_price = (
-                book.price * quantity
-            )  # Obliczanie wartości dla pojedynczego produktu
-            total_price += item_total_price  # Dodaj do całkowitej wartości zamówienia
+            item_total_price = book.price * quantity
+            total_price += item_total_price
 
             OrderItem.objects.create(
                 order=order, book=book, quantity=quantity, total_price=item_total_price
             )
 
-        # Ustawiamy całkowitą wartość zamówienia
         order.total_price = total_price
         order.save()
 
@@ -643,6 +747,13 @@ class UpdateOrderStatusView(APIView):
             if new_status in dict(Order.STATUS_CHOICES).keys():
                 order.status = new_status
                 order.save()
+
+                Event.objects.create(
+                    user=order.user,
+                    action="ORDER_STATUS_UPDATED",
+                    description=f"Your order {order.id} status has been updated to {new_status}.",
+                )
+
                 return Response(
                     {"status": "Zmieniono status zamówienia"}, status=status.HTTP_200_OK
                 )

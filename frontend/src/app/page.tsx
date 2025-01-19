@@ -34,7 +34,10 @@ const HomePage: React.FC = () => {
 
     apiClient.get('/events/')
       .then(response => setEvents(response.data))
-      .catch(error => console.error(error));
+      .catch(error => {
+        // console.error(error);
+        // To suppress this error, you can comment out the line above
+      });
   }, []);
 
   const addToCart = (book: Book) => {
