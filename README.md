@@ -38,22 +38,23 @@ Web application called Bibliopolis is an online store with books created in Next
 
 ### User
 
-![1.1](https://github.com/MarcinOrl/WebBookStore/tree/main/backend/media/gitscreenshots/1.1_page.png)
-![1.2](https://github.com/MarcinOrl/WebBookStore/tree/main/backend/media/gitscreenshots/1.2_books.png)
-![1.3](https://github.com/MarcinOrl/WebBookStore/tree/main/backend/media/gitscreenshots/1.3_books_id.png)
-![1.4](https://github.com/MarcinOrl/WebBookStore/tree/main/backend/media/gitscreenshots/1.4_cart.png)
-![1.5](https://github.com/MarcinOrl/WebBookStore/tree/main/backend/media/gitscreenshots/1.5_checkout.png)
-![1.6](https://github.com/MarcinOrl/WebBookStore/tree/main/backend/media/gitscreenshots/1.6_orders.png)
-![1.7](https://github.com/MarcinOrl/WebBookStore/tree/main/backend/media/gitscreenshots/1.7_slider.png)
-![1.8](https://github.com/MarcinOrl/WebBookStore/tree/main/backend/media/gitscreenshots/1.8_profile.png)
-![1.9](https://github.com/MarcinOrl/WebBookStore/tree/main/backend/media/gitscreenshots/1.9_login.png)
-![1.10](https://github.com/MarcinOrl/WebBookStore/tree/main/backend/media/gitscreenshots/1.10_register.png)
+![1.1](https://raw.githubusercontent.com/MarcinOrl/WebBookStore/main/backend/media/gitscreenshots/1.1_page.png)
+![1.2](https://raw.githubusercontent.com/MarcinOrl/WebBookStore/main/backend/media/gitscreenshots/1.2_books.png)
+![1.3](https://raw.githubusercontent.com/MarcinOrl/WebBookStore/main/backend/media/gitscreenshots/1.3_books_id.png)
+![1.4](https://raw.githubusercontent.com/MarcinOrl/WebBookStore/main/backend/media/gitscreenshots/1.4_cart.png)
+![1.5](https://raw.githubusercontent.com/MarcinOrl/WebBookStore/main/backend/media/gitscreenshots/1.5_checkout.png)
+![1.6](https://raw.githubusercontent.com/MarcinOrl/WebBookStore/main/backend/media/gitscreenshots/1.6_orders.png)
+![1.7](https://raw.githubusercontent.com/MarcinOrl/WebBookStore/main/backend/media/gitscreenshots/1.7_slider.png)
+![1.8](https://raw.githubusercontent.com/MarcinOrl/WebBookStore/main/backend/media/gitscreenshots/1.8_profile.png)
+![1.9](https://raw.githubusercontent.com/MarcinOrl/WebBookStore/main/backend/media/gitscreenshots/1.9_login.png)
+![1.10](https://raw.githubusercontent.com/MarcinOrl/WebBookStore/main/backend/media/gitscreenshots/1.10_register.png)
 
 ### Admin
 
-![2.1](https://github.com/MarcinOrl/WebBookStore/tree/main/backend/media/gitscreenshots/2.1_books.png)
-![2.2](https://github.com/MarcinOrl/WebBookStore/tree/main/backend/media/gitscreenshots/2.2_books_id.png)
-![2.3](https://github.com/MarcinOrl/WebBookStore/tree/main/backend/media/gitscreenshots/2.3_slider.png)
-![2.4](https://github.com/MarcinOrl/WebBookStore/tree/main/backend/media/gitscreenshots/2.4_add_image.png)
-![2.5](https://github.com/MarcinOrl/WebBookStore/tree/main/backend/media/gitscreenshots/2.5_edit_slider.png)
-![2.6](https://github.com/MarcinOrl/WebBookStore/tree/main/backend/media/gitscreenshots/2.6_profile.png)
+![2.1](https://raw.githubusercontent.com/MarcinOrl/WebBookStore/main/backend/media/gitscreenshots/2.1_books.png)
+![2.2](https://raw.githubusercontent.com/MarcinOrl/WebBookStore/main/backend/media/gitscreenshots/2.2_books_id.png)
+![2.3](https://raw.githubusercontent.com/MarcinOrl/WebBookStore/main/backend/media/gitscreenshots/2.3_slider.png)
+![2.4](https://raw.githubusercontent.com/MarcinOrl/WebBookStore/main/backend/media/gitscreenshots/2.4_add_image.png)
+![2.5](https://raw.githubusercontent.com/MarcinOrl/WebBookStore/main/backend/media/gitscreenshots/2.5_edit_slider.png)
+![2.6](https://raw.githubusercontent.com/MarcinOrl/WebBookStore/main/backend/media/gitscreenshots/2.6_profile.png)
+
