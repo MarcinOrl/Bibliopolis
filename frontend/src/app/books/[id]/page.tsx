@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import apiClient from "../../../utils/api";
 import { useUser } from "../../../utils/UserContext";
+import Image from "next/image";
 
 
 interface Category {
@@ -149,7 +150,13 @@ const BookPage = () => {
         {/* Sekcja z detalami książki */}
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="flex-shrink-0">
-            <img src={book.image} alt={book.title} className="w-full lg:w-96 h-auto object-contain rounded shadow" />
+            <Image 
+              src={book.image} 
+              alt={book.title} 
+              className="w-full lg:w-96 h-auto object-contain rounded shadow"
+              width={500}
+              height={500}
+            />
           </div>
           <div className="flex-grow">
             <h1 className="text-3xl font-bold mb-4">{book.title}</h1>
@@ -235,7 +242,13 @@ const BookPage = () => {
             <div className="secondary-color p-6 rounded-lg shadow-lg max-w-lg w-full">
               <h2 className="text-xl font-bold mb-4">The book has been added to the cart</h2>
               <div className="flex gap-4 items-center">
-                <img src={book.image} alt={book.title} className="w-20 h-32 object-contain" />
+                <Image 
+                  src={book.image} 
+                  alt={book.title} 
+                  className="w-20 h-32 object-contain" 
+                  width={200}
+                  height={300}
+                />
                 <div>
                   <h3 className="text-lg font-semibold">{book.title}</h3>
                   <p>{book.price} zł</p>

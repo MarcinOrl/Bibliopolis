@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import apiClient from '../utils/api';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 interface Book {
   id: number;
@@ -79,10 +80,12 @@ const HomePage: React.FC = () => {
               className="primary-light rounded-lg shadow-lg hover:shadow-xl transition-all w-full max-w-xs cursor-pointer"
               onClick={() => router.push(`/books/${book.id}`)}
             >
-              <img
+              <Image
                 src={book.image}
                 alt={book.title}
                 className="w-full h-60 object-contain"
+                width={300}
+                height={300}
               />
               <div className="p-4">
                 <h3 className="text-lg font-bold accent-text">{book.title}</h3>
@@ -126,10 +129,12 @@ const HomePage: React.FC = () => {
           <div className="secondary-color p-6 rounded-lg shadow-lg max-w-lg w-full">
             <h2 className="text-xl font-bold mb-4">The book has been added to the cart</h2>
             <div className="flex gap-4 items-center">
-              <img
+              <Image
                 src={bookToAdd.image}
                 alt={bookToAdd.title}
                 className="w-20 h-32 object-contain"
+                width={300}
+                height={300}
               />
               <div>
                 <h3 className="text-lg font-semibold">{bookToAdd.title}</h3>

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "../../utils/UserContext";
 import apiClient from "../../utils/api";
+import Image from "next/image";
 
 interface Book {
   id: number;
@@ -116,10 +117,12 @@ const Cart = () => {
               className="flex flex-col lg:flex-row items-center justify-between gap-6 p-4 border-b border-gray-300 rounded-lg"
             >
               <div className="flex-shrink-0 w-32 h-32">
-                <img
+                <Image
                   src={item.book?.image || "/default-image.jpg"}
                   alt={item.book?.title || "Book"}
                   className="w-full h-full object-cover rounded-lg shadow-md"
+                  width={200}
+                  height={200}
                 />
               </div>
               <div className="flex-grow">

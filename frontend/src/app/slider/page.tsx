@@ -7,6 +7,7 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { useUser } from '../../utils/UserContext';
+import Image from 'next/image';
 
 interface GalleryImage {
   id: number;
@@ -169,10 +170,12 @@ const SliderComponent: React.FC = () => {
           <Slider {...settings}>
             {images.map((image: GalleryImage) => (
               <div key={image.id} className="card shadow-lg">
-                <img
+                <Image
                   src={image.image}
                   alt={image.title}
                   className="w-full h-48 object-cover rounded-lg"
+                  width={500}
+                  height={500}
                 />
                 <div className="description">
                   <h2>{image.title}</h2>

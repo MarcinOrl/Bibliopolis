@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useUser } from "../../utils/UserContext";
 import apiClient from "../../utils/api";
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 interface GalleryImage {
   id: number;
@@ -206,10 +207,12 @@ const SliderOrderForm = () => {
             {images.map((image) => (
               <li key={image.id} className="flex justify-between items-center space-x-4">
                 <div className="w-16 h-16 overflow-hidden rounded-lg">
-                  <img
+                  <Image
                     src={`http://127.0.0.1:8000${image.image}`}
                     alt={image.title}
                     className="w-full h-full object-cover"
+                    width={100}
+                    height={100}
                   />
                 </div>
 
