@@ -1,12 +1,12 @@
-# WebBookStore
+# Bibliopolis
 Web application called Bibliopolis is an online store with books created in Next.js and Django. Project for the subject 'Designing web applications'.
 
 ## Quick Start
 
 1. Clone the repository and navigate to the project directory:
     ```bash
-    git clone https://github.com/MarcinOrl/book-review-platform.git
-    cd book-review-platform
+    git clone https://github.com/MarcinOrl/Bibliopolis.git
+    cd Bibliopolis
     ```
 
 2. Set up the backend:
